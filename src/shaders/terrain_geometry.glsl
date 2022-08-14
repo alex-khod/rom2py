@@ -7,11 +7,12 @@ uniform WindowBlock
 } window;
 
 in VS_OUT {
-        float tile_id;
-        vec4 hate_map;
+    float tile_id;
+    vec4 hate_map;
 } gs_in[];
 
 out vec2 tex_coord;
+out float is_passable;
 
 layout (points) in;
 layout (triangle_strip, max_vertices = 4) out;
@@ -19,9 +20,14 @@ layout (triangle_strip, max_vertices = 4) out;
 void main() {
     const float TILE_SIZE = 32.0;
 
-    float tile_id = gs_in[0].tile_id;
-    float stripe_id = uint(tile_id) >> 4u;
-    float row_id = uint(tile_id) & 15u;
+    uint tile_id = uint(gs_in[0].tile_id);
+    float stripe_id = tile_id >> 4u;
+    float row_id = tile_id & 15u;
+    //    stripe_id = [28..31] - rock tiles
+    //    stripe_id = [32..48] - water tiles
+    is_passable = float((stripe_id > 27.5) && (stripe_id < 49.5));
+    // not
+    is_passable = 1.0 - is_passable;
 
     vec2 tx_offset = vec2(stripe_id * TILE_SIZE, row_id * TILE_SIZE);
     float nudge = 2.0;
