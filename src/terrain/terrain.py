@@ -28,6 +28,6 @@ class Terrain:
 
         pyglet.graphics.draw(8, pyglet.gl.GL_LINES, position=('i', vertices), colors=("f", colors))
 
-    def render(self):
+    def draw(self):
         self.draw_origin()
         self.renderer.draw()
