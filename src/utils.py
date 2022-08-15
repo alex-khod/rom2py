@@ -1,8 +1,39 @@
 import os
 
+
+def _bisect_left(array, value):
+    prev = array[0]
+    for i, v in enumerate(array):
+        if value < v:
+            return prev
+        prev = v
+    return prev
+
+
+def _bisect_left_bs(array, value):
+    prev = array[0]
+    lo = 0
+    hi = len(array) - 1
+
+    while lo < hi:
+        mid = (lo + hi) // 2
+        guess = array[mid]
+        if guess > value:
+            hi = mid - 1
+        elif guess < value:
+            lo = lo + 1
+        else:
+            return guess
+    return lo
+
+
+bisect_left = _bisect_left_bs
+
+
 def memusage():
     import os, psutil
     return psutil.Process(os.getpid()).memory_info().rss / (1024 ** 2)
+
 
 def dumpobj(obj):
     """
@@ -21,6 +52,7 @@ def dumpobj(obj):
         print("\nMethods")
     for k, v in methods:
         print(k, v)
+
 
 # todo test
 
