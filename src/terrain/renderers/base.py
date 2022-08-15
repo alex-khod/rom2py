@@ -164,7 +164,7 @@ class TerrainSpriteRenderer:
                     animation = water_tile_anim(WATER_TILE_START)
 
                 sprite = TileSprite(animation, x=x1, y=y1, batch=batch)
-                sprite.heights = alm.heights_for_tile(tile_x=tile_x, tile_y=tile_y)
+                sprite.heights = alm.tile_corner_heights_at(tile_x=tile_x, tile_y=tile_y)
                 sprites.append(sprite)
 
         self.batch = batch

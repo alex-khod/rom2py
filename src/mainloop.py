@@ -36,13 +36,22 @@ def mainloop():
             x, y = camera.screen_xy_to_world_xy(mouse_x, mouse_y)
             cursor_sprite.update(x=x, y=y)
 
+            tile_x, tile_y = alm.world_xy_to_tile_xy(x, y)
+            x1, y1 = tile_x * TILE_SIZE, tile_y * TILE_SIZE
+            hover_tile_sprite._vertex_list.translate[:] = (x1, y1, 0) * 4
+            hover_tile_sprite.heights = alm.tile_corner_heights_at(tile_x=tile_x, tile_y=tile_y)
+
+            label.text = f"x{int(x)} y{int(y)} tx{tile_x} ty{tile_y} l{1} r{2}"
+
         def on_draw(self):
             camera.begin()
             self.clear()
             terrain.draw()
             renderer.draw()
             cursor_sprite.draw()
+            hover_tile_sprite.draw()
             camera.end()
+            label.draw()
             # fps_display.draw()
 
     map_viewport_rect = (0, 0, 1024, 768)
@@ -54,7 +63,8 @@ def mainloop():
     # window.view = window.view.scale((1, -1, 1))
     # window.view = window.view.translate((0, window.size[1], 0))
     # window.projection = window.projection.orthogonal_projection(0, 1024, 0, 768, z_near=0, z_far=1)
-
+    # window.projection = window.projection.perspective_projection(1024 / 768, -255, 255, 45)
+    label = pyglet.text.Label(x=20, y=20, color=(255, 0, 255, 255))
     alm = Resources.get("scenario")["10.alm"].content
     # alm = Resources.from_file("data", "atest.alm")
 
@@ -70,6 +80,11 @@ def mainloop():
     cursor_a16_sprite = Resources["graphics", "cursors", "arrow7", "sprites.16a"].content
     image = cursor_a16_sprite[0].to_rgba_image_data()
     cursor_sprite = pyglet.sprite.Sprite(image, 0, 0)
+
+    reds = (255,) * 32 * 32
+    image = pyglet.image.ImageData(32, 32, "R", bytes(reds))
+    from src.terrain.renderers.base import TileSprite
+    hover_tile_sprite = TileSprite(image)
 
     def tick(dt):
         camera.scroll(dt)
