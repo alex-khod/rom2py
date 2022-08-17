@@ -10,6 +10,7 @@ def init_mappings():
         "units.reg": registry.UnitRegistry,
         "structures.reg": registry.StructureRegistry,
         "objects.reg": registry.ObjectRegistry,
+        "projectiles.reg": registry.ProjectileRegistry,
         "itemname.bin": simple.ItemnameBin,
         "data.bin": databin.DataBin,
     }

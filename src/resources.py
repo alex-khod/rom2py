@@ -71,6 +71,7 @@ class Resources(object, metaclass=ResourcesMeta):
         "structures.reg": ("graphics", "structures", "structures.reg"),
         "objects.reg": ("graphics", "objects", "objects.reg"),
         "units.reg": ("graphics", "units", "units.reg"),
+        "projectiles.reg": ("graphics", "projectiles", "projectiles.reg"),
     }
 
     @classmethod
@@ -187,7 +188,7 @@ class Resource(rage_of_mages_1_res.RageOfMages1Res):
 
 def custom_repr_header(self):
     addr = hex(id(self))
-    return f"Header of hdr.resource <{self.record}> at {addr}"
+    return f"Header of hdr.record <{self.record}> at {addr}"
 
 
 def custom_repr_file(self):
@@ -196,5 +197,12 @@ def custom_repr_file(self):
     return f"{attrs}, {type(self)} at {addr}"
 
 
+def custom_repr_directory(self):
+    attrs = f"{self.name}"
+    addr = hex(id(self))
+    return f"{attrs}, {type(self)} at {addr}"
+
+
 rage_of_mages_1_res.RageOfMages1Res.ResourceHeader.__repr__ = custom_repr_header
 rage_of_mages_1_res.RageOfMages1Res.ResourceRecordFile.__repr__ = custom_repr_file
+rage_of_mages_1_res.RageOfMages1Res.ResourceRecordDirectory.__repr__ = custom_repr_file
