@@ -20,6 +20,10 @@ class Camera:
         self.min_zoom = min_zoom
         self.x = 0
         self.y = 0
+        # actual translate offset
+        self.translate_x = 0
+        self.translate_y = 0
+
         self.vx = 0
         self.vy = 0
         self._zoom = max(min(1, self.max_zoom), self.min_zoom)
@@ -48,6 +52,12 @@ class Camera:
         # x = max(x, x_min)
         # y = min(y, y_max)
         # y = max(y, y_min)
+
+        w, h = self._window.size
+        zoom = self._zoom
+        self.translate_x = (x + w / 2) * zoom - w / 2
+        self.translate_y = (y + h / 2) * zoom - h / 2 + h
+
         self.x, self.y = x, y
 
     def handle_scroll(self, scroll_y):
@@ -71,24 +81,22 @@ class Camera:
             self.vx = 0
 
     def screen_xy_to_world_xy(self, x, y):
-        inverted_transform_matrix = ~self.get_transform_matrix()
-        pos = inverted_transform_matrix @ pyglet.math.Vec4(x, y, 0, 1)
-        return pos.x, pos.y
+        x = (x + self.translate_x) / self._zoom
+        y = (y - self.translate_y) / -self._zoom
+
+        # matrix impl
+        # inverted_transform_matrix = ~self.get_transform_matrix()
+        # pos = inverted_transform_matrix @ pyglet.math.Vec4(x, y, 0, 1)
+        # x, y = pos.x, pos.y
+        return x, y
 
     def get_transform_matrix(self):
-        zoom = self._zoom
-        w, h = self._window.size
-        # x = self.x
-        # y = self.y + h
-        # offset translate by zoom screen difference to zoom in at screen center point
-        x = (self.x + w / 2) * zoom - w / 2
-        y = (self.y + h / 2) * zoom - h / 2 + h
-        z = 0
         # opengl renders things at (0, 0, 0)
         # translate the world in inverse direction relative to camera to simulate camera movement
-        # y translates directly because coordinates are flipped
+        # y translates directly to flip coordinates
         transform_matrix = self._window.view
-        transform_matrix = transform_matrix.translate((-x, y, z))
+        transform_matrix = transform_matrix.translate((-self.translate_x, self.translate_y, 0))
+        zoom = self._zoom
         transform_matrix = transform_matrix.scale((zoom, -zoom, 1))
         return transform_matrix
 
