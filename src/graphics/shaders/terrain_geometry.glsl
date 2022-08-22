@@ -12,6 +12,7 @@ in VS_OUT {
 } gs_in[];
 
 out vec2 tex_coord;
+out vec2 tex_coord2;
 out float is_passable;
 
 layout (points) in;
@@ -37,18 +38,22 @@ void main() {
 
     gl_Position = window.projection * window.view * (tile_pos + vec4(0, -hate_map[0], 0.0, 0.0));
     tex_coord = vec2(tx_offset.x + nudge, tx_offset.y + nudge);
+    tex_coord2 = tile_pos.xy;
     EmitVertex();
 
-    gl_Position = window.projection * window.view * (tile_pos + vec4(32.0, -hate_map[1], 0.0, 0.0));
+    gl_Position = window.projection * window.view * (tile_pos + vec4(TILE_SIZE, -hate_map[1], 0.0, 0.0));
     tex_coord = vec2(tx_offset.x + TILE_SIZE - nudge, tx_offset.y + nudge);
+    tex_coord2 = tile_pos.xy + vec2(32.0, 0.0);
     EmitVertex();
 
-    gl_Position = window.projection * window.view * (tile_pos + vec4(0.0, -hate_map[3] + 32.0, 0.0, 0.0));
+    gl_Position = window.projection * window.view * (tile_pos + vec4(0.0, -hate_map[3] + TILE_SIZE, 0.0, 0.0));
     tex_coord = vec2(tx_offset.x, tx_offset.y + TILE_SIZE - nudge);
+    tex_coord2 = tile_pos.xy + vec2(0.0, 32.0);
     EmitVertex();
 
-    gl_Position = window.projection * window.view * (tile_pos + vec4(32.0, -hate_map[2] + 32.0, 0.0, 0.0));
+    gl_Position = window.projection * window.view * (tile_pos + vec4(TILE_SIZE, -hate_map[2] + TILE_SIZE, 0.0, 0.0));
     tex_coord = vec2(tx_offset.x + TILE_SIZE - nudge, tx_offset.y + TILE_SIZE - nudge);
+    tex_coord2 = tile_pos.xy + vec2(32.0, 32.0);
     EmitVertex();
 
     EndPrimitive();
