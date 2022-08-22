@@ -3,12 +3,11 @@
 
 import numpy as np
 
-def to_colors(char* data, int data_size, int w, int h, Py_ssize_t x0, Py_ssize_t  y0, char x_flip):
+def ROM256_to_color_indexes(char* data, int data_size, int w, int h):
     output = np.zeros((h, w), dtype=np.uint8)
     cdef Py_ssize_t offset = 0
     cdef Py_ssize_t  x = 0
     cdef Py_ssize_t  y = 0
-    cdef Py_ssize_t  target_x
 
     while offset < data_size:
         _byte = data[offset]
@@ -26,10 +25,9 @@ def to_colors(char* data, int data_size, int w, int h, Py_ssize_t x0, Py_ssize_t
             y += x // w
             x = x % w
             idx = data[offset]
-            target_x = w - 1 - x0 - x if x_flip else x0 + x
             # check if there is non-zero data byte. if there is at least one, there will be errors on paletting..
             # assert idx > 0
-            output[y0 + y, target_x] = idx
+            output[y, x] = idx
             offset += 1
             x += 1
     return output

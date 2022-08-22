@@ -1,10 +1,10 @@
-from .base import A256, A256Frame
+from .base import ROM256, ROM256Frame
 import numba
 import numpy as np
 
 
 @numba.njit
-def to_colors(data, output, data_size, w, h, x0, y0, x_flip=False):
+def ROM256_to_color_indexes(data, output, data_size, w, h):
     # if not self._cache is None:
     #     return self._cache
     x, y = 0, 0
@@ -13,34 +13,34 @@ def to_colors(data, output, data_size, w, h, x0, y0, x_flip=False):
         char = data[offset]
         val, code = char & 0x3f, char & 0xc0
         offset += 1
-        if (code > 0):
+        if code > 0:
             # skip transparent bytes
-            if (code == 0x40):
+            if code == 0x40:
                 y += val
             else:
                 x += val
-        else:
-            for j in range(val):
-                y += x // w
-                x = x % w
-                idx = data[offset]
-                target_x = w - 1 - x0 - x if x_flip else x0 + x
-                output[y0 + y][target_x] = idx
-                offset += 1
-                x += 1
+            continue
+
+        for _ in range(val):
+            y += x // w
+            x = x % w
+            idx = data[offset]
+            output[y][x] = idx
+            offset += 1
+            x += 1
 
 
-class A256FrameNumba(A256Frame):
+class ROM256FrameNumba(ROM256Frame):
 
-    def to_colors(self):
-        w, h = self.width, self.height
+    def to_color_indexes(self):
         data = self._sprite.data
         data_size = self._sprite.data_size
+        w, h = self.width, self.height
         output = np.zeros((h, w), dtype='uint8')
-        to_colors(data, output, data_size, w, h, self.x0, self.y0, self._x_flip)
+        ROM256_to_color_indexes(data, output, data_size, w, h)
         output = np.frombuffer(output, dtype="uint8").reshape(h, w)
         return output
 
 
-class A256Numba(A256):
-    _record_class = A256FrameNumba
+class ROM256Numba(ROM256):
+    _frame_class = ROM256FrameNumba
