@@ -10,6 +10,7 @@ Requires Python 3.7x.
 git clone https://github.com/alex-khod/rom2py.git
 cd rom2py
 pip install -r requirements.txt
+python setup.py build
 ```
 
 Requires ROM2 to be installed to run. Pinpoint the path containig `graphics.res` in `config.ini`.

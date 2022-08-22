@@ -7,8 +7,9 @@ tests:
 benchmarks:
     python -m "nose" time_tests --with-timer
 build:
-    # build cython extensions, non essential
-    python setup.py build_ext --inplace
+    # build c and cython extensions, non essential
+#     python setup.py build_ext --inplace
+    python setup.py build
 start:
     python main.py
 fetch formats:

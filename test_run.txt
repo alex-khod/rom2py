@@ -3,19 +3,20 @@ Ran 27 tests in 0.849s
 
 OK
 
-[success] 53.38% time_tests.test_sprite_loaders.TestLoaders.test_python: 2.9605s
-[success] 13.91% time_tests.test_sprite_loaders.TestLoaders.test_cython: 0.7712s
-[success] 6.87% time_tests.test_sprite_loaders.TestLoaders.test_numba: 0.3808s
-[success] 6.51% time_tests.test_target_search.TestSearch.test_simple_search: 0.3612s
-[success] 3.07% time_tests.test_filter_big_lists.TestFilterDummyA.test_filter_thing_through_call: 0.1705s
-[success] 3.03% time_tests.test_sprite_loaders.TestLoaders.test_cpp: 0.1680s
-[success] 2.68% time_tests.test_filter_big_lists.TestFilterDummyA.test_filter_class_thing_through_call: 0.1487s
-[success] 2.02% time_tests.test_filter_big_lists.TestFilterDummyA.test_filter_thing: 0.1118s
-[success] 1.90% time_tests.test_filter_big_lists.TestFilterDummyB.test_filter_thing: 0.1052s
-[success] 1.77% time_tests.test_pathfind.TestBfs.test_bfs: 0.0979s
-[success] 1.73% time_tests.test_filter_big_lists.TestFilterMultipleLoops.test_filter_multiple_loops: 0.0958s
-[success] 1.65% time_tests.test_filter_big_lists.TestFilterDummyA.test_filter_class_thing: 0.0916s
-[success] 1.48% time_tests.test_filter_big_lists.TestFilterDummyB.test_filter_class_thing: 0.0821s
+[success] 52.05% time_tests.test_sprite_loaders.TestLoaders.test_python: 2.9197s
+[success] 13.60% time_tests.test_sprite_loaders.TestLoaders.test_cython: 0.7629s
+[success] 6.85% time_tests.test_sprite_loaders.TestLoaders.test_numba: 0.3842s
+[success] 6.51% time_tests.test_target_search.TestSearch.test_simple_search: 0.3649s
+[success] 2.99% time_tests.test_filter_big_lists.TestFilterDummyA.test_filter_thing_through_call: 0.1679s
+[success] 2.77% time_tests.test_sprite_loaders.TestLoaders.test_cext: 0.1553s
+[success] 2.64% time_tests.test_sprite_loaders.TestLoaders.test_cpp: 0.1484s
+[success] 2.64% time_tests.test_filter_big_lists.TestFilterDummyA.test_filter_class_thing_through_call: 0.1481s
+[success] 1.93% time_tests.test_filter_big_lists.TestFilterDummyA.test_filter_thing: 0.1085s
+[success] 1.83% time_tests.test_filter_big_lists.TestFilterDummyB.test_filter_thing: 0.1028s
+[success] 1.65% time_tests.test_filter_big_lists.TestFilterDummyA.test_filter_class_thing: 0.0923s
+[success] 1.62% time_tests.test_filter_big_lists.TestFilterMultipleLoops.test_filter_multiple_loops: 0.0911s
+[success] 1.48% time_tests.test_pathfind.TestBfs.test_bfs: 0.0830s
+[success] 1.42% time_tests.test_filter_big_lists.TestFilterDummyB.test_filter_class_thing: 0.0794s
 [success] 0.00% time_tests.test_target_search.TestSearch.test_numba_simple_search: 0.0002s
 ----------------------------------------------------------------------
 Ran 14 tests in 7.125s
