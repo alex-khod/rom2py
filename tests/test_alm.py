@@ -26,8 +26,8 @@ class TestAlm(TestCase):
     def test_heights_column_at(self):
         alm = Resources.from_file("data", "atest.alm")
         h, w = 4, 4
-        alm.general_map_info.width = w
-        alm.general_map_info.height = h
+        alm.general.width = w
+        alm.general.height = h
         alm["heights"].body.heights = sum([[0, 0, 0, 1] for _ in range(h)], [])
         assert alm.heights_column_at(w - 1) == (1, 1, 1, 1)
 

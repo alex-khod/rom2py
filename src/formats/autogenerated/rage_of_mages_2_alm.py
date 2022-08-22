@@ -123,7 +123,7 @@ class RageOfMages2Alm(KaitaiStruct):
         self._raw_header = self._io.read_bytes(20)
         _io__raw_header = KaitaiStream(BytesIO(self._raw_header))
         self.header = RageOfMages2Alm.SectionHeader(_io__raw_header, self, self._root)
-        self.general_map_info = RageOfMages2Alm.GeneralMapInfoSec(self._io, self, self._root)
+        self.general = RageOfMages2Alm.GeneralSec(self._io, self, self._root)
         self.sections = [None] * ((self.alm_header.section_count - 1))
         for i in range((self.alm_header.section_count - 1)):
             self.sections[i] = RageOfMages2Alm.AlmSection(self._io, self, self._root)
@@ -137,8 +137,8 @@ class RageOfMages2Alm(KaitaiStruct):
             self._read()
 
         def _read(self):
-            self.objects = [None] * ((self._root.general_map_info.width * self._root.general_map_info.height))
-            for i in range((self._root.general_map_info.width * self._root.general_map_info.height)):
+            self.objects = [None] * ((self._root.general.width * self._root.general.height))
+            for i in range((self._root.general.width * self._root.general.height)):
                 self.objects[i] = self._io.read_u1()
 
 
@@ -204,17 +204,18 @@ class RageOfMages2Alm(KaitaiStruct):
 
         def _read(self):
             self.name = (KaitaiStream.bytes_terminate(self._io.read_bytes(128), 0, False)).decode(u"ASCII")
-            self.check_operators = [None] * (6)
+            self.check_ids = [None] * (6)
             for i in range(6):
+                self.check_ids[i] = self._io.read_u4le()
+
+            self.instance_ids = [None] * (4)
+            for i in range(4):
+                self.instance_ids[i] = self._io.read_u4le()
+
+            self.check_operators = [None] * (3)
+            for i in range(3):
                 self.check_operators[i] = self._io.read_u4le()
 
-            self.instance_operators = [None] * (4)
-            for i in range(4):
-                self.instance_operators[i] = self._io.read_u4le()
-
-            self.check_01_operator = KaitaiStream.resolve_enum(RageOfMages2Alm.CheckOperator, self._io.read_u4le())
-            self.check_23_operator = KaitaiStream.resolve_enum(RageOfMages2Alm.CheckOperator, self._io.read_u4le())
-            self.check_45_operator = KaitaiStream.resolve_enum(RageOfMages2Alm.CheckOperator, self._io.read_u4le())
             self.run_once_flag = self._io.read_u4le()
 
 
@@ -229,7 +230,7 @@ class RageOfMages2Alm(KaitaiStruct):
             self.name = (KaitaiStream.bytes_terminate(self._io.read_bytes(64), 0, False)).decode(u"ASCII")
             self.type = KaitaiStream.resolve_enum(RageOfMages2Alm.InstanceType, self._io.read_u4le())
             self.id = self._io.read_u4le()
-            self.execute_once_flag = self._io.read_u4le()
+            self.run_once_flag = self._io.read_u4le()
             self.argument_values = [None] * (10)
             for i in range(10):
                 self.argument_values[i] = self._io.read_u4le()
@@ -252,8 +253,8 @@ class RageOfMages2Alm(KaitaiStruct):
             self._read()
 
         def _read(self):
-            self.structures = [None] * (self._root.general_map_info.structure_count)
-            for i in range(self._root.general_map_info.structure_count):
+            self.structures = [None] * (self._root.general.structure_count)
+            for i in range(self._root.general.structure_count):
                 self.structures[i] = RageOfMages2Alm.StructureEntry(self._io, self, self._root)
 
 
@@ -266,13 +267,13 @@ class RageOfMages2Alm(KaitaiStruct):
             self._read()
 
         def _read(self):
-            self.sacks = [None] * (self._root.general_map_info.sack_count)
-            for i in range(self._root.general_map_info.sack_count):
+            self.sacks = [None] * (self._root.general.sack_count)
+            for i in range(self._root.general.sack_count):
                 self.sacks[i] = RageOfMages2Alm.SackEntry(self._io, self, self._root)
 
 
 
-    class GeneralMapInfoSec(KaitaiStruct):
+    class GeneralSec(KaitaiStruct):
         def __init__(self, _io, _parent=None, _root=None):
             self._io = _io
             self._parent = _parent
@@ -354,7 +355,7 @@ class RageOfMages2Alm(KaitaiStruct):
             self.name = (KaitaiStream.bytes_terminate(self._io.read_bytes(64), 0, False)).decode(u"ASCII")
             self.type = KaitaiStream.resolve_enum(RageOfMages2Alm.CheckType, self._io.read_u4le())
             self.id = self._io.read_u4le()
-            self.execute_once_flag = self._io.read_u4le()
+            self.run_once_flag = self._io.read_u4le()
             self.argument_values = [None] * (10)
             for i in range(10):
                 self.argument_values[i] = self._io.read_u4le()
@@ -480,9 +481,9 @@ class RageOfMages2Alm(KaitaiStruct):
             self._read()
 
         def _read(self):
-            self._raw_tiles = [None] * ((self._root.general_map_info.width * self._root.general_map_info.height))
-            self.tiles = [None] * ((self._root.general_map_info.width * self._root.general_map_info.height))
-            for i in range((self._root.general_map_info.width * self._root.general_map_info.height)):
+            self._raw_tiles = [None] * ((self._root.general.width * self._root.general.height))
+            self.tiles = [None] * ((self._root.general.width * self._root.general.height))
+            for i in range((self._root.general.width * self._root.general.height)):
                 self._raw_tiles[i] = self._io.read_bytes(2)
                 _io__raw_tiles = KaitaiStream(BytesIO(self._raw_tiles[i]))
                 self.tiles[i] = RageOfMages2Alm.TileEntry(_io__raw_tiles, self, self._root)
@@ -564,8 +565,8 @@ class RageOfMages2Alm(KaitaiStruct):
             self._read()
 
         def _read(self):
-            self.units = [None] * (self._root.general_map_info.unit_count)
-            for i in range(self._root.general_map_info.unit_count):
+            self.units = [None] * (self._root.general.unit_count)
+            for i in range(self._root.general.unit_count):
                 self.units[i] = RageOfMages2Alm.UnitEntry(self._io, self, self._root)
 
 
@@ -578,8 +579,8 @@ class RageOfMages2Alm(KaitaiStruct):
             self._read()
 
         def _read(self):
-            self.players = [None] * (self._root.general_map_info.player_count)
-            for i in range(self._root.general_map_info.player_count):
+            self.players = [None] * (self._root.general.player_count)
+            for i in range(self._root.general.player_count):
                 self.players[i] = RageOfMages2Alm.PlayerEntry(self._io, self, self._root)
 
 
@@ -592,8 +593,8 @@ class RageOfMages2Alm(KaitaiStruct):
             self._read()
 
         def _read(self):
-            self.heights = [None] * ((self._root.general_map_info.width * self._root.general_map_info.height))
-            for i in range((self._root.general_map_info.width * self._root.general_map_info.height)):
+            self.heights = [None] * ((self._root.general.width * self._root.general.height))
+            for i in range((self._root.general.width * self._root.general.height)):
                 self.heights[i] = self._io.read_u1()
 
 
