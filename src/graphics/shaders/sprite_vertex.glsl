@@ -4,10 +4,12 @@ in vec2 position;
 in vec3 translate;
 in vec3 tex_coords;
 in vec3 pal_coords;
+in vec4 colors;
 
 out VS_OUT{
     vec3 tex_coords;
     vec3 pal_coords;
+    vec4 color;
 } vs_out;
 
 uniform WindowBlock
@@ -27,4 +29,5 @@ void main()
     gl_Position = window.projection * window.view * m_translate * vec4(position.xy, 0.0, 1.0);
     vs_out.tex_coords = tex_coords;
     vs_out.pal_coords = pal_coords;
+    vs_out.color = colors;
 }

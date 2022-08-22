@@ -4,10 +4,15 @@ in VS_OUT{
     vec3 tex_coords;
 //    'flat' modifier doesn't seem to do anything useful
     vec3 pal_coords;
+    vec4 color;
 } fs_in;
 
+
+const float MODE_R = 0;
+const float MODE_RG = 1.0;
+
 //uniform vec3 palette[256];
-uniform float flex;
+uniform float mode;
 layout(binding=0) uniform sampler2D sprite_texture;
 //layout(binding=1) uniform sampler1DArray palette_texture;
 layout(binding=1) uniform sampler2D palette_texture;
@@ -30,7 +35,7 @@ void main()
     color_uv += fs_in.pal_coords.st;
     float alpha = float(color_index > 0.75);
     //    Now actually use the offset to get color
-    frag_color = vec4(texture(palette_texture, color_uv).rgb, alpha);
+    frag_color = vec4(texture(palette_texture, color_uv).rgb * 1.5, alpha) * fs_in.color;
     //    (debug) Draw palette offset. Should output flat-shaded quad, probably red
     //    frag_color = vec4(fs_in.pal_coords, 1.0);
     //    frag_color = vec4(color_index/256, 0.0, 0.0, 1.0);

@@ -160,6 +160,11 @@ class UnitAnimationSequencer:
             # NOOOO that shouldn't have happened. Sequencer shouldn't need to know HOW to flip the image,
             # only that it needs to be flipped. Oh well...
             frame = unit_frames[idx]
+            record = self.unit_record
+            w, h = record["width"], record["height"]
+            cx, cy = record["centerx"], record["centery"]
+            frame.anchor_x = cx + (-w + frame.width) // 2
+            frame.anchor_y = cy + (-h + frame.height) // 2
             if x_flip:
                 frame = frame.get_transform(flip_x=True)
             frames.append(frame)
