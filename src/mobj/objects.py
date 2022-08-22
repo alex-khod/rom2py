@@ -51,9 +51,9 @@ class Objects:
     def prepare_objects(self):
         for oid, obj_record in self.registry.objects_by_id.items():
             key = "objects\\" + obj_record["filename"] + ".256"
-            frames = self.graphics.items[key]
+            frames = self.graphics[key]
             self.animations[oid] = get_object_animation(frames, obj_record)
-            palette = self.graphics.items[key + "inner"]
+            palette = self.graphics[key + "inner"]
             self.palettes[oid] = palette
 
     def load_objects(self, alm):

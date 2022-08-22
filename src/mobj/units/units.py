@@ -36,7 +36,7 @@ class Units:
         units_by_id = list(self.unit_registry.units_by_id.items())
         for utid, unit_record in units_by_id:
             key = "units\\" + unit_record["filename"] + ".256"
-            frames = self.graphics.items[key]
+            frames = self.graphics[key]
             self.unit_frames[utid] = frames
             pal_key = "units\\" + os.path.dirname(unit_record["filename"]) + "\\"
             palette_paths = [key + "inner"] + [pal_key + "palette%d.pal" % i for i in range(2, 5)]
@@ -44,7 +44,7 @@ class Units:
             palettes = []
             for path in palette_paths:
                 try:
-                    palettes.append(self.graphics.items[path])
+                    palettes.append(self.graphics[path])
                 except KeyError as e:
                     print(e)
                     pass
