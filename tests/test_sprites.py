@@ -5,8 +5,9 @@ from src.formats.sprites.base import ROM16A as ROM16APython
 from src.formats.sprites._sprites_cpp import ROM256Cpp, ROM16ACpp
 from src.formats.sprites._sprites_cy import ROM256Cython
 from src.formats.sprites._sprites_numba import ROM256Numba
-from src.formats.sprites._sprites_cext import ROM256CExt
+from src.formats.sprites._sprites_cext import ROM256CExt, ROM16ACExt
 import numpy as np
+
 
 class TestBase(TestCase):
 
@@ -46,27 +47,38 @@ class TestROM256Cpp(SpriteTest, TestCase):
     test_resource_path = "graphics", "objects", "bambuk1", "sprites.256"
     good_data_path = "data", "bambuk.bin"
 
+
 class Test256Numba(SpriteTest, TestCase):
     impl_class = ROM256Numba
     test_resource_path = "graphics", "objects", "bambuk1", "sprites.256"
     good_data_path = "data", "bambuk.bin"
+
 
 class Test256Cython(SpriteTest, TestCase):
     impl_class = ROM256Cython
     test_resource_path = "graphics", "objects", "bambuk1", "sprites.256"
     good_data_path = "data", "bambuk.bin"
 
+
 class Test256CExt(SpriteTest, TestCase):
     impl_class = ROM256CExt
     test_resource_path = "graphics", "objects", "bambuk1", "sprites.256"
     good_data_path = "data", "bambuk.bin"
+
 
 class TestROM16APython(SpriteTest, TestCase):
     impl_class = ROM16APython
     test_resource_path = "graphics", "interface", "inn", "unit1", "sprites.16a"
     good_data_path = "data", "unit.bin"
 
+
 class TestROM16ACpp(SpriteTest, TestCase):
     impl_class = ROM16ACpp
+    test_resource_path = "graphics", "interface", "inn", "unit1", "sprites.16a"
+    good_data_path = "data", "unit.bin"
+
+
+class Test16ACExt(SpriteTest, TestCase):
+    impl_class = ROM16ACExt
     test_resource_path = "graphics", "interface", "inn", "unit1", "sprites.16a"
     good_data_path = "data", "unit.bin"
