@@ -18,7 +18,11 @@ class EAnimType(IntEnum):
     bones = 4
 
 
-class EFacing(IntEnum):
+class EDirection(IntEnum):
+    pass
+
+
+class EDirection8(EDirection):
     # ↓ ↙ ← ↖ ↑ ↗ → ↘
     down = 0  # ↓
     downleft = 1  # ↙
@@ -29,9 +33,22 @@ class EFacing(IntEnum):
     right = 6  # →
     downright = 7  # ↘
 
+    flip_x_start = 4
 
-class EIdleFacing(IntEnum):
+
+class EDirection16(EDirection):
     down = 0  # ↓
+    downleft = 2  # ↙
+    left = 4  # ←
+    upleft = 6  # ↖
+    up = 8  # ↑
+    upright = 10  # ↗
+    right = 12  # →
+    downright = 14  # ↘
+
+    flip_x_start = 8
+
+    down0 = 0  # ↓
     down22 = 1
     down45 = 2  # ↙
     down67 = 3
@@ -49,6 +66,9 @@ class EIdleFacing(IntEnum):
     down337 = 15
 
 
+assert len(EDirection16) == 16
+
+
 class UnitAnimationSequencer:
     """
     The class retrieves frame_ids or frames themselves for animations.
@@ -63,7 +83,7 @@ class UnitAnimationSequencer:
     clockwise direction with some angle: ↓ ↙ ← ↖ ↑ ↗ → ↘.
 
     1. Idle group, just one frame of a unit looking in a particular direction, per direction.
-    There are 16 or 9 directions for this group, depending on x_flip. The directions correspond to EIdleFacing enum.
+    There are 16 or 9 directions for this group, depending on x_flip. The directions correspond to EDirection16 enum.
 
     If x_flip is off, there is 16 directions and 16 frames for the group.
     If x_flip flag is on, then the sprite is deemed symmetrical and just 9 directions (0..8) are stored in .256 file.
@@ -72,7 +92,7 @@ class UnitAnimationSequencer:
 
     2. Move, moving animation group. Moving animations start at next frame index after Idle group.
         The count of frames for each animation is mphases=(movebeginphases + movephases).
-        Animations come in 8 or 5 directions (EFacing enum), depending on x_flip flag.
+        Animations come in 8 or 5 directions (EDirection8 enum), depending on x_flip flag.
         First there is entire moving animation for direction 0, then animation for direction 1, etc.
         So with a hypothetical animation with mphases 2, frames will be faced to: ↓ ↓ ↙ ↙ ← ←...
 
@@ -82,7 +102,7 @@ class UnitAnimationSequencer:
     """
 
     types = EAnimType
-    facings = EFacing
+    facings = EDirection8
 
     def __init__(self, unit_frames, unit_record):
         self.unit_record = unit_record
@@ -99,9 +119,9 @@ class UnitAnimationSequencer:
         self.x_flip = int('flip' in unit_record and unit_record['flip'])
 
         # len(↙ ← ↖) = 3 directions are flipped
-        facings_sans_flip = len(EFacing) - self.x_flip * 3
+        facings_sans_flip = len(EDirection8) - self.x_flip * 3
         # len(↖ * 3, ←, ↙ * 3) = 7 directions are flipped
-        idle_facings_sans_flip = len(EIdleFacing) - self.x_flip * 7
+        idle_facings_sans_flip = len(EDirection16) - self.x_flip * 7
 
         length = [1, movestart + moves, attacks, deaths, bones]
         facings = [idle_facings_sans_flip, facings_sans_flip, facings_sans_flip, facings_sans_flip,
@@ -117,7 +137,7 @@ class UnitAnimationSequencer:
 
     @classmethod
     def facings_by_type(cls, atype: EAnimType):
-        return EIdleFacing if atype == EAnimType.idle else EFacing
+        return EDirection16 if atype == EAnimType.idle else EDirection8
 
     def offset(self, atype: EAnimType, facing: int):
         total_facings = len(self.facings_by_type(atype=atype))
