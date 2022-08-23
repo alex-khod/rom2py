@@ -29,16 +29,15 @@ def bfs(grid, start, goal):
                 return backtrace(parent, start, goal)
 
             # evaluation order is
-            # 1 2 3
-            # 4 5 6
-            # 7 8 9
-            for dy in range(-1, 2):
-                for dx in range(-1, 2):
-                    if dy == 0 and dx == 0:
-                        continue
-                    nx = x + dx
-                    ny = y + dy
-                    if -1 < nx < w and -1 < ny < h and (nx, ny) not in visited:
-                        parent[(nx, ny)] = x, y
-                        visited.add((nx, ny))
-                        q.appendleft(((nx, ny), path + (nx, ny)))
+            moves = [(-1, 0), (1, 0), (0, -1), (0, 1)]
+            moves += [(-1,-1), (-1, 1), (1, -1), (1, 1)]
+
+            for dx, dy in moves:
+                if dy == 0 and dx == 0:
+                    continue
+                nx = x + dx
+                ny = y + dy
+                if -1 < nx < w and -1 < ny < h and (nx, ny) not in visited:
+                    parent[(nx, ny)] = x, y
+                    visited.add((nx, ny))
+                    q.appendleft(((nx, ny), path + (nx, ny)))
