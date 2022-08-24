@@ -80,6 +80,14 @@ def mainloop():
             hover.sprite._vertex_list.translate[:] = (x1, y1, 0) * 4
             hover.sprite.heights = alm.tile_corner_heights_at(tile_x=tile_x, tile_y=tile_y)
 
+            # prototype select hint
+            if world.units.unit_map[tile_y][tile_x]:
+                select.sprite._vertex_list.translate[:] = (x1, y1, 0) * 4
+                select.sprite.heights = alm.tile_corner_heights_at(tile_x=tile_x, tile_y=tile_y)
+                select.sprite.opacity = 127
+            else:
+                select.sprite.opacity = 0
+
             self.text = f"x{int(x)} y{int(y)} tx{tile_x} ty{tile_y} l{1} r{2}"
 
         def on_draw(self):
@@ -94,6 +102,8 @@ def mainloop():
                 hover._ticks -= 1
             else:
                 hover.sprite.opacity = 64
+
+            select.sprite.draw()
 
             # prototype dynamic redraw
 
@@ -192,13 +202,12 @@ def mainloop():
 
     def make_selection_tile():
         selection = Mock()
-        greens = (255,) * 32 * 32
-        image = pyglet.image.ImageData(32, 32, "R", bytes(greens))
+        image = pyglet.image.SolidColorImagePattern((0, 255, 0, 255)).create_image(32, 32)
         selection.sprite = TileSprite(image)
-        selection.sprite.opacity = 64
         return selection
 
     hover = make_hover_tile()
+    select = make_selection_tile()
 
     fps_display = pyglet.window.FPSDisplay(window=window)
 
