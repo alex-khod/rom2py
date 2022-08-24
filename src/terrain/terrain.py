@@ -21,9 +21,12 @@ def calc_light_map(alm):
     sunz = -0.75
     heights = alm.heights
 
+    light_map_w = 2 ** math.ceil(math.log2(w))
+    light_map_h = 2 ** math.ceil(math.log2(h))
+
     def light_map_numpy():
         # lighting of a tile is dot(tile_normal, sun_vec) * 64 + 96
-        light_map = np.zeros((w, h), dtype="uint8")
+        light_map = np.zeros((light_map_w, light_map_h), dtype="uint8")
         sun_vec = np.array([sunx, suny, sunz])
         for x in range(1, w - 1):
             for y in range(1, h - 1):
@@ -41,10 +44,10 @@ def calc_light_map(alm):
                 light_map[y, x] = lighting
         return light_map
 
-    @file_cache("lightmap.bin")
+    # @file_cache("lightmap.bin")
     def light_map_manual():
         # lighting of a tile is dot(tile_normal, sun_vec) * 64 + 96
-        light_map = [[0] * w for _ in range(h)]
+        light_map = [[0] * light_map_w for _ in range(light_map_h)]
         for x in range(1, w - 1):
             for y in range(1, h - 1):
                 dh_right = heights[y][x] - heights[y][x + 1]
@@ -77,9 +80,11 @@ class Terrain:
         self.renderer = Renderer(alm)
 
         self.light_map = calc_light_map(alm)
-        # TODO the texture should be POT
-        light_map_tex = b''.join([bytes(row) for row in self.light_map])
-        light_map_tex = pyglet.image.ImageData(256, 256, "R", light_map_tex)
+
+        # pad each row with zeros to get 512 x 512 image
+        h, w = len(self.light_map), len(self.light_map[0])
+        light_map_tex_data = b''.join([bytes(row) for row in self.light_map])
+        light_map_tex = pyglet.image.ImageData(w, h, "R", light_map_tex_data)
         self.renderer.light_map_tex = light_map_tex.get_texture()
 
     def draw_origin(self):
