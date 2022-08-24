@@ -1,4 +1,7 @@
 # from .renderers.base import TerrainSpriteRenderer as Renderer
+from profilehooks import timecall
+
+from src.utils import file_cache
 from .renderers.shader import TerrainShaderRenderer as Renderer
 import pyglet
 
@@ -38,6 +41,7 @@ def calc_light_map(alm):
                 light_map[y, x] = lighting
         return light_map
 
+    @file_cache("lightmap.bin")
     def light_map_manual():
         # lighting of a tile is dot(tile_normal, sun_vec) * 64 + 96
         light_map = [[0] * w for _ in range(h)]
@@ -60,13 +64,14 @@ def calc_light_map(alm):
 
                 dot_magnitude = abs(cx * sunx + cy * suny + cz * sunz)
                 light_map[y][x] = int(dot_magnitude * 64 + 96)
-        return light_map
+        return tuple(map(tuple, light_map))
 
     return light_map_manual()
 
 
 class Terrain:
 
+    @timecall
     def __init__(self, alm):
         self.alm = alm
         self.renderer = Renderer(alm)
