@@ -1,4 +1,5 @@
 import pyglet.graphics
+from profilehooks import timecall
 
 from src.resources import Resources
 
@@ -7,13 +8,13 @@ TILE_SIZE = 32
 
 class Structures:
 
-    def __init__(self, alm, renderer, graphics):
+    def __init__(self, alm, renderer):
         self.alm = alm
         self.registry = Resources.special("structures.reg").content
         self.renderer = renderer
+        self.graphics = renderer.graphics
         self.animations = {}
         self.palettes = {}
-        self.graphics = graphics
         self.sprites = []
         self.prepare_structures()
         self.load_structures(alm)
@@ -26,6 +27,7 @@ class Structures:
             palette = self.graphics[key.lower() + "inner"]
             self.palettes[sid] = palette
 
+    @timecall
     def load_structures(self, alm):
         for structure in alm["structures"].body.structures:
             sid = structure.type_id

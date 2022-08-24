@@ -1,6 +1,6 @@
 import os.path
 
-from profilehooks import timecall
+from profilehooks import timecall, profile
 
 from src.graphics.textures import TextureAtlas, TextureBin, Texture
 from pyglet.gl import *
@@ -44,32 +44,32 @@ class GraphicsRegistry:
         self._items = {}
         self.load_all_graphics()
 
-    @timecall
-    def load_all_graphics(self):
-        graphics_res = Resources["graphics"]
-        files = graphics_res.list_files()
-        whitelist = ["objects", "units", "structures"]
-        files = filter(lambda x: x.startswith("objects") or x.startswith("units") or x.startswith("structures"), files)
-        files = filter(lambda x: not x.endswith("spritesb.256"), files)
-        # files = filter(lambda x: x.startswith("objects"), files)
-
+    @property
+    def ext_mapping(self):
         ext_mapping = {
             ".256": self.prepare_rom256,
             # ".16a": self.prepare_rom16a,
             ".pal": self.prepare_palette,
         }
+        return ext_mapping
+
+    @timecall
+    def load_all_graphics(self):
+        graphics_res = Resources["graphics"]
+        files = graphics_res.list_files()
+        whitelist = ["objects", "units", "structures"]
+        files = filter(lambda x: any([x.startswith(word) for word in whitelist]), files)
+        files = filter(lambda x: not x.endswith("spritesb.256"), files)
+        ext_keys = list(self.ext_mapping.keys())
+        files = filter(lambda x: any([x.endswith(ext) for ext in ext_keys]), files)
 
         for path in files:
             ext = os.path.splitext(path)[1]
-            if not ext in ext_mapping:
-                continue
-            store_action = ext_mapping[ext]
-
+            store_action = self.ext_mapping[ext]
             if len(graphics_res[path].bytes) == 0:
                 print(f"Zero-length sprite: {path}")
                 continue
             content = graphics_res[path].content
-
             store_action(content, path.lower())
             # import traceback
             # traceback.print_exc()
