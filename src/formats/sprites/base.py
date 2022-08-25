@@ -275,8 +275,8 @@ class BmpHandler:
         return PILImage.open(path)
 
     @classmethod
-    def from_bytes(cls, bytes):
-        bytesio = io.BytesIO(bytes)
+    def from_bytes(cls, data):
+        bytesio = io.BytesIO(data)
         return PILImage.open(bytesio)
 
 

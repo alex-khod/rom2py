@@ -33,9 +33,11 @@ class Selector:
         '.glsl': simple.ShaderSource,
         '.txt': simple.TextLines,
         '.alm': alm2.Alm2,
+        '.wav': simple.WavHandler,
         '.256': sprites.ROM256,
         '.16a': sprites.ROM16A,
         '.bmp': sprites.BmpHandler,
+        '.png': sprites.BmpHandler,  # huh?? yeah!!
         '.pal': sprites.Palette,
     }
 

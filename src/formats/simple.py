@@ -1,5 +1,7 @@
 import io
 
+import pyglet
+
 
 class ItemnameBin:
     """
@@ -66,3 +68,18 @@ class ShaderSource:
         wrapper = io.TextIOWrapper(reader)
         lines = wrapper.read()
         return lines
+
+
+class WavHandler:
+
+    @classmethod
+    def from_file(cls, path):
+        return pyglet.media.load(path)
+
+    @classmethod
+    def from_bytes(cls, data):
+        bytesio = io.BytesIO(data)
+        source = pyglet.media.load("file.wav", bytesio)
+        # shouldn't be static for music.res
+        media = pyglet.media.StaticSource(source)
+        return media
