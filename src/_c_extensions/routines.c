@@ -37,7 +37,7 @@ PyObject* ROM256_to_color_indexes (PyObject* self /* module */, PyObject* args)
     Py_buffer output;
     uint32_t data_size, w, h;
 
-    if(!PyArg_ParseTuple(args, "yy*iii", &data, &output, &data_size, &w, &h)) {
+    if(!PyArg_ParseTuple(args, "y*y*iii", &data, &output, &data_size, &w, &h)) {
         return NULL;
     }
 
