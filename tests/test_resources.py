@@ -25,12 +25,15 @@ class TestResourceLookup(TestCase):
 
     def test_resource_is_cached(self):
         res = Resources["graphics"]
+        assert res is Resources["graphics"]
+        # equivalent
         assert id(res) == id(Resources["graphics"])
 
     def test_special_lookup(self):
         assert isinstance(Resources.special("units.reg"), resources.ResourceRecordFile)
 
     def test_res_directory_lookup(self):
+        assert type(Resources["graphics", "units"]) is not tuple
         assert type(Resources["graphics", "units"]) is list
         assert type(Resources[("graphics", "units")]) is list
         assert type(Resources["graphics"]["units"]) is list

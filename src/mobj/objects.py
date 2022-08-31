@@ -1,7 +1,9 @@
 import pyglet.graphics
 from profilehooks import timecall
+from pyglet.math import Vec2
 
 from src.formats.alm2 import Alm2
+from src.mobj.layer import Layer
 from src.resources import Resources
 
 TILE_SIZE = 32
@@ -50,7 +52,7 @@ class Objects:
         self.prepare_objects()
 
         w, h = alm.width, alm.height
-        self.object_map = [[None for _ in range(w)] for _ in range(h)]
+        self.layer = Layer(w, h)
         self.load_objects(alm)
 
     def prepare_objects(self):
@@ -73,16 +75,15 @@ class Objects:
                 continue
             tile_x = x % alm.width
             tile_y = x // alm.width
+            tile_xy = Vec2(tile_x, tile_y)
 
-            avg_height = alm.tile_avg_heights_at(tile_x, tile_y)
-            x = tile_x * TILE_SIZE + TILE_SIZE // 2
-            y = tile_y * TILE_SIZE + TILE_SIZE // 2 - avg_height
+            xy = alm.tile_center_at(tile_xy)
             try:
                 animation = self.animations[oid]
                 palette = self.palettes[oid]
                 image = animation
                 image = animation.frames[0].image
-                sprite = self.renderer.add_sprite(x, y, animation=image, palette=palette)
+                sprite = self.renderer.add_sprite(*xy, animation=image, palette=palette)
                 sprite.animation = animation
                 sprite._frame_id = 0
 
@@ -94,22 +95,7 @@ class Objects:
 
                 sprite.redraw = obj_redraw
 
-                # # TODO in dire need of a factory
-                # from unittest.mock import Mock
-                # mobj = Mock()  # dummy
-                # unit = mobj
-                # from src.mobj.units.units import WalkAi
-                # mobj_ai = Mock
-                # unit.ai = mobj_ai
-                # unit.ai.walk_ai = WalkAi()
-                #
-                # unit.sprite = sprite
-                # unit.ai.walk_ai.rotation_phases = 0
-                # unit.ai.walk_ai.x = tile_x
-                # unit.ai.walk_ai.y = tile_y
-                # unit.EID = "o%d" % x
-
-                self.object_map[tile_y][tile_x] = sprite
+                self.layer[tile_xy] = sprite
                 self.sprites.append(sprite)
             except KeyError:
                 print(f"No anim for oid {oid}")

@@ -1,9 +1,13 @@
+from typing import List
+
 import pyglet
 import os
 from ..tilemap import TileMap
 from src.resources import get_resource_at_root
 
 from pyglet.gl import *
+
+from ...formats.alm2 import Alm2
 
 jn = os.path.join
 
@@ -47,6 +51,9 @@ class Clamp(pyglet.graphics.TextureGroup):
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST)
 
 
+from src.utils import Vec2
+
+
 class TileSprite(pyglet.sprite.Sprite):
     _heights = (0, 0, 0, 0)
 
@@ -57,6 +64,19 @@ class TileSprite(pyglet.sprite.Sprite):
     @heights.setter
     def heights(self, heights):
         self._heights = heights
+        self._update_position()
+
+    def set_shape_from_tile_xy(self, alm: Alm2, tile_xy: Vec2):
+        xy = alm.xy_from_tile_xy(tile_xy)
+        heights = alm.tile_corner_heights_at(*tile_xy)
+        self.set_shape(xy, heights)
+
+    def set_shape(self, xy: Vec2, heights: List[int]):
+        self._x = xy.x
+        self._y = xy.y
+        self._vertex_list.translate[:] = (self._x, self._y, self._z) * 4
+
+        self.heights = heights
         self._update_position()
 
     def _update_position(self):

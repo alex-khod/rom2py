@@ -13,7 +13,6 @@ def write_test_data():
         f.write(_bytes)
 
     _bytes = Resources["graphics", "interface", "inn", "unit1", "sprites.16a"].bytes
-    # from src.formats.sprites.base import ROM16A as A16Python
     rom16a = ROM16APython.from_bytes(_bytes)
     idxs = rom16a[0].to_color_indexes()
     import os

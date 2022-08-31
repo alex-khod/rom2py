@@ -18,6 +18,7 @@ from .animation import UnitAnimationSequencer, AnimRegistry, EAnimType, EDirecti
 
 from profilehooks import timecall
 
+from ..layer import Layer
 from ...graphics.renderers.paletted import PalettedSprite
 
 jn = os.path.join
@@ -56,7 +57,7 @@ class Units:
 
         self.units = []
         w, h = alm.width, alm.height
-        self.unit_map = [[None for _ in range(w)] for _ in range(h)]
+        self.layer = Layer(w, h)
         self.load_units(alm)
 
     def prepare_units(self):
@@ -133,53 +134,26 @@ class Units:
     @timecall
     def load_units(self, alm: Alm2):
 
-        pike = Resources["sfx", "units", "pike.wav"].content
-        sword = Resources["sfx", "units", "sword.wav"].content
-        soft = Resources["sfx", "units", "soft3.wav"].content
-        easy = Resources["sfx", "characters", "hildarius", "easy.wav"].content
-
-        def unitmk():
-            self = Mock()
-            self.x = 0
-            self.y = 0
-            self.type_id = 23
-            self.face_id = 0
-            self.flags = 0
-            self.flags2 = 0
-            self.server_id = 10230
-            self.player_id = 0
-            self.sack_id = 0
-            self.direction = 0
-            self.hp = 10
-            self.max_hp = 0
-            self.unit_id = 3999
-            self.group_id = 0
-            return self
-
-        mage = unitmk()
-        self.mage = mage
-        alm["units"].body.units.append(mage)
-
         for _, unit in enumerate(alm["units"].body.units):
             unit_template = self.databin.units_by_server_id[unit.server_id]
             utid = unit.type_id
-            palette_id = 0
             tile_x = unit.x >> 8
             tile_y = unit.y >> 8
+            tile_xy = Vec2(tile_x, tile_y)
             direction = unit.direction
-            x = tile_x * TILE_SIZE + TILE_SIZE // 2
-            y = tile_y * TILE_SIZE + TILE_SIZE // 2
 
             animations = self.animations[utid]
             animation = animations[EAnimType.idle][direction]
             palettes = self.palettes[utid]
             palette_id = unit.face_id - 1 if unit.face_id - 1 < len(palettes) else 0
             palette = palettes[palette_id]
+
             image = animation
             image = animation.frames[0].image
 
-            avg_height = alm.tile_avg_heights_at(tile_x, tile_y)
-            sprite = self.renderer.add_sprite(x, y - avg_height, animation=image, palette=palette)
+            unit.tile_xy = tile_xy
+            unit.xy = alm.tile_center_at(tile_xy)
+            sprite = self.renderer.add_sprite(*unit.xy, animation=image, palette=palette)
             sprite.animation = animation
             self.sprites.append(sprite)
 
@@ -188,52 +162,38 @@ class Units:
             unit.sprite = sprite
             unit.frame_id = 0
             unit.state = movement.UnitAiStates.idle
-            unit.move_frame_id = 0
-            ai = movement.UnitAi()
-            ai.angle = unit.direction
-            walk_ai = ai.walk_ai
 
             unit.dead = False
 
-            unit_record = self.unit_registry.units_by_id[utid]
+            ai = movement.UnitAi()
 
-            walk_ai.rotation_phases = len(EDirection16)
-            walk_ai.move_begin_phases = unit_record["movebeginphases"]
-            walk_ai.move_phases = len(animations[EAnimType.move][0].frames)
-            walk_ai.tile_xy = Vec2(tile_x, tile_y)
-            walk_ai.xy = Vec2(x, y)
-            walk_ai.height = avg_height
-            walk_ai.frame_id = 0
+            unit_record = self.unit_registry.units_by_id[utid]
+            ai.rotation_phases = len(EDirection16) * 16
+            ai.move_begin_phases = unit_record["movebeginphases"]
+            ai.move_phases = unit_record["movephases"]
+            ai.attack_phases = unit_record["attackphases"]
 
             # unit.speed = 0.5
             unit.speed = unit_template.speed / 20
+            unit.rot_speed = unit.speed
 
             unit.ai = ai
             unit.EID = "u%d" % unit.unit_id
 
             def unit_redraw(unit: Unit):
                 state = unit.ai.state
-                angle = unit.ai.angle
+                divisor = 16 if state.name == "idle" else 32
+                angle = unit.ai.angle // divisor
                 state_animations = unit.animations[state]
                 angle = min(angle, len(state_animations) - 1)
                 angle_animations = state_animations[angle]
 
-                frame_id = unit.move_frame_id % len(angle_animations.frames)
+                frame_id = unit.frame_id % len(angle_animations.frames)
                 frame = angle_animations.frames[frame_id]
                 texture = frame.image
 
-                if unit != mage:
-                    if state == 2:
-                        if unit.move_frame_id % (len(angle_animations.frames) * 2)  == 0:
-                            if mage.hp > 0:
-                                mage.hp -= 1
-                                random.choice([pike, sword, soft, easy]).play()
-                            unit.move_frame_id = 1
-
-                height = unit.ai.walk_ai.height
-                sprite_xy = unit.ai.walk_ai.xy
-                unit.sprite.x = sprite_xy.x
-                unit.sprite.y = sprite_xy.y - height
+                unit.sprite.x = unit.xy.x
+                unit.sprite.y = unit.xy.y
                 unit.sprite._set_texture(texture)
                 unit.sprite._update_position()
 
@@ -242,7 +202,7 @@ class Units:
             unit.redraw = unit_redraw
 
             self.units.append(unit)
-            self.unit_map[tile_y][tile_x] = unit
+            self.layer[tile_xy] = unit
 
     def render(self):
         self.batch.draw()
