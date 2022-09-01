@@ -34,6 +34,10 @@ def _bisect_left_bs(array, value):
 bisect_left = _bisect_left_bs
 
 
+def lerp(from_value, to_value, factor):
+    return from_value + (to_value - from_value) * factor
+
+
 def memusage():
     import os, psutil
     return psutil.Process(os.getpid()).memory_info().rss / (1024 ** 2)

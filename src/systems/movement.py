@@ -5,7 +5,7 @@ from enum import IntEnum
 from typing import Tuple, List
 
 from src.formats.alm2 import Alm2
-from src.utils import Vec2
+from src.utils import Vec2, lerp
 
 TILE_SIZE = 32
 
@@ -85,24 +85,35 @@ class MovementSystem:
         return res
 
 
+class Progress:
+    def __init__(self, speed=0.1, elapsed=0, duration=1):
+        self.speed = speed
+        self.elapsed = elapsed
+        self.duration = duration
+
+        self.progress = elapsed / duration if duration > 0 else 1
+
+    def tick(self):
+        self.elapsed += self.speed
+        self.progress = self.elapsed / self.duration if self.duration > 0 else 1
+
+
 class RotateTask:
     def __init__(self, mobj, from_angle, to_angle):
         self.mobj = mobj
         self.from_angle = from_angle
         self.to_angle = to_angle
         self.dphi = MovementSystem.rotation_dphi(from_angle, to_angle)
-
-        self.elapsed = 0
-        self.duration = abs(self.dphi)
+        self.to_angle_shortest = self.from_angle + self.dphi
+        self.progress = Progress(mobj.rot_speed, from_angle, self.to_angle_shortest)
 
     def tick(self):
         mobj = self.mobj
-
-        self.elapsed += mobj.rot_speed * 4
-        factor = self.elapsed / self.duration
-
-        mobj.ai.angle = int(self.from_angle + factor * self.dphi) % 256
-        return factor > 1.0
+        self.progress.tick()
+        factor = self.progress.progress
+        angle = lerp(self.from_angle, self.to_angle_shortest, factor)
+        mobj.ai.angle = int(angle) % 256
+        return factor >= 1
 
 
 class MoveTask:
@@ -113,26 +124,29 @@ class MoveTask:
         self.from_tile_xy = from_tile_xy
         self.to_tile_xy = to_tile_xy
         self.move_angle = MovementSystem.direction_to_tile(from_tile_xy, to_tile_xy)
-        self.elapsed = 0
-        next_tile_dxdy = to_tile_xy - from_tile_xy
-        self.distance = math.hypot(*next_tile_dxdy) * TILE_SIZE
 
         self.world = world
         self.from_xy = world.alm.tile_center_at(from_tile_xy)
         self.to_xy = world.alm.tile_center_at(to_tile_xy)
+
+        next_tile_dxdy = to_tile_xy - from_tile_xy
+        duration = math.hypot(*next_tile_dxdy) * TILE_SIZE
+
+        self.progress = Progress(mobj.speed, 0, duration)
 
     def tick(self):
         mobj = self.mobj
         mobj.ai.angle = self.move_angle
         mobj.ai.state = UnitAiStates.move
 
-        speed = mobj.speed
-        self.elapsed += speed
-        factor = self.elapsed / self.distance
+        self.progress.tick()
+        factor = self.progress.progress
         mobj.xy = self.from_xy.lerp(self.to_xy, factor)
-        mobj.frame_id = mobj.ai.move_begin_phases + int(factor * mobj.ai.move_phases)
+        frame_id = lerp(mobj.ai.move_begin_phases, mobj.ai.move_phases - 1, factor)
+        mobj.frame_id = int(frame_id)
 
-        if factor >= 1.0:
+        if factor >= 1:
+            # should be animation effect?
             mobj.tile_xy = self.to_tile_xy
             self.world.units.layer[self.from_tile_xy] = None
             self.world.units.layer[self.to_tile_xy] = mobj
@@ -148,19 +162,17 @@ class AttackTask:
         self.mobj = mobj
         self.target = target
 
-        self.elapsed = 0
-        self.duration = mobj.ai.attack_phases * 5
+        self.progress = Progress(1 / mobj.ai.attack_phases, 0, mobj.ai.attack_phases)
 
     def tick(self):
         mobj = self.mobj
         mobj.ai.state = UnitAiStates.attack
         mobj.ai.angle = MovementSystem.direction_to_tile(mobj.tile_xy, self.target.tile_xy)
+        self.progress.tick()
+        factor = self.progress.progress
 
-        self.elapsed += 1
-        factor = self.elapsed / self.duration
-        mobj.frame_id = int(factor * mobj.ai.attack_phases)
-
-        return factor > 1.0
+        mobj.frame_id = int(lerp(0, mobj.ai.attack_phases - 1, factor))
+        return factor > 1
 
 
 class DieTask:

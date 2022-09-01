@@ -175,7 +175,7 @@ class Units:
 
             # unit.speed = 0.5
             unit.speed = unit_template.speed / 20
-            unit.rot_speed = unit.speed
+            unit.rot_speed = unit.speed * 4
 
             unit.ai = ai
             unit.EID = "u%d" % unit.unit_id
