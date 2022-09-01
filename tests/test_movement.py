@@ -41,17 +41,8 @@ class TestMovement(TestCase):
         walk_ai.path = [[-1, -1]]
         assert MovementSystem.direction_to_next_cell(walk_ai) == EDirection16.upleft.value
 
-    def test_rotation_direction(self):
-        assert MovementSystem.rotation_dphi_direction(0, 0) == 0
-        assert MovementSystem.rotation_dphi_direction(0, 1) == 1
-
-        assert MovementSystem.rotation_dphi_direction(0, 3, period=4) == -1
-        assert MovementSystem.rotation_dphi_direction(3, 0, period=4) == 1
-        assert MovementSystem.rotation_dphi_direction(0, 2, period=4) == 1
-        assert MovementSystem.rotation_dphi_direction(2, 0, period=4) == 1
-
-    def test_rotation_dphi(self):
-        assert MovementSystem.rotation_dphi(0, 3, period=4) == -1
-        assert MovementSystem.rotation_dphi(3, 0, period=4) == 1
-        assert MovementSystem.rotation_dphi(0, 2, period=4) == 2
-        assert MovementSystem.rotation_dphi(2, 0, period=4) == 2
+    def test_angle_diff_shortest(self):
+        assert MovementSystem.angle_diff_shortest(0, 3, period=4) == -1
+        assert MovementSystem.angle_diff_shortest(3, 0, period=4) == 1
+        assert MovementSystem.angle_diff_shortest(0, 2, period=4) == 2
+        assert MovementSystem.angle_diff_shortest(2, 0, period=4) == 2

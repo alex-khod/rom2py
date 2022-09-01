@@ -69,20 +69,13 @@ class MovementSystem:
         return direction
 
     @staticmethod
-    def rotation_dphi(rotate_from: int, rotate_to: int, period=256):
+    def angle_diff_shortest(angle_from: int, angle_to: int, period=256):
         """ Return shortest angle between operands. """
         half_period = period // 2
-        diff = (rotate_to - rotate_from + period) % period
+        diff = (angle_to - angle_from + period) % period
         if diff > half_period:
             return diff - period
         return diff
-
-    @staticmethod
-    def rotation_dphi_direction(rotate_from: int, rotate_to: int, period=256):
-        res = MovementSystem.rotation_dphi(rotate_from, rotate_to, period)
-        if res != 0:
-            res = res // abs(res)
-        return res
 
 
 class Progress:
@@ -103,15 +96,15 @@ class RotateTask:
         self.mobj = mobj
         self.from_angle = from_angle
         self.to_angle = to_angle
-        self.dphi = MovementSystem.rotation_dphi(from_angle, to_angle)
-        self.to_angle_shortest = self.from_angle + self.dphi
-        self.progress = Progress(mobj.rot_speed, from_angle, self.to_angle_shortest)
+        self.angle_diff = MovementSystem.angle_diff_shortest(from_angle, to_angle)
+        self.final_angle = self.from_angle + self.angle_diff
+        self.progress = Progress(mobj.rot_speed, from_angle, self.final_angle)
 
     def tick(self):
         mobj = self.mobj
         self.progress.tick()
         factor = self.progress.progress
-        angle = lerp(self.from_angle, self.to_angle_shortest, factor)
+        angle = lerp(self.from_angle, self.final_angle, factor)
         mobj.ai.angle = int(angle) % 256
         return factor >= 1
 
