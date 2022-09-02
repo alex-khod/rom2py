@@ -1,4 +1,4 @@
-#version 330 core
+#version 150 core
 
 in VS_OUT{
     vec3 tex_coords;
@@ -35,6 +35,10 @@ void main()
     float alpha = float(color_index > 0.75);
     //    Now actually use the offset to get color
     frag_color = vec4(texture(palette_texture, color_uv).rgb * 1.5, alpha) * fs_in.color;
+    if (frag_color.a < 0.5){
+        discard;
+    }
+    //    frag_color = vec4(vec3(gl_FragCoord.z * 4), 1.0);
     //    (debug) Draw palette offset. Should output flat-shaded quad, probably red
     //    frag_color = vec4(fs_in.pal_coords, 1.0);
     //    frag_color = vec4(color_index/256, 0.0, 0.0, 1.0);

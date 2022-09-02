@@ -1,4 +1,4 @@
-#version 330 core
+#version 150 core
 
 in vec2 position;
 in vec3 translate;
@@ -26,7 +26,7 @@ void main()
     m_translate[3][1] = translate.y;
     m_translate[3][2] = translate.z;
 
-    gl_Position = window.projection * window.view * m_translate * vec4(position.xy, 0.0, 1.0);
+    gl_Position = window.projection * window.view * m_translate * vec4(position, 0.0, 1.0);
     vs_out.tex_coords = tex_coords;
     vs_out.pal_coords = pal_coords;
     vs_out.color = colors;

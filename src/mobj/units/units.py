@@ -174,7 +174,7 @@ class Units:
             ai.attack_phases = unit_record["attackphases"]
 
             # unit.speed = 0.5
-            unit.speed = unit_template.speed / 20
+            unit.speed = unit_template.speed / 20 * 8
             unit.rot_speed = unit.speed * 4
 
             unit.ai = ai
@@ -194,6 +194,8 @@ class Units:
 
                 unit.sprite.x = unit.xy.x
                 unit.sprite.y = unit.xy.y
+                unit.sprite.z = unit.xy.y / (alm.height * 32) * 256
+                # unit.sprite.z = 1 - unit.xy.y / (alm.height * 32)
                 unit.sprite._set_texture(texture)
                 unit.sprite._update_position()
 
@@ -203,6 +205,3 @@ class Units:
 
             self.units.append(unit)
             self.layer[tile_xy] = unit
-
-    def render(self):
-        self.batch.draw()
