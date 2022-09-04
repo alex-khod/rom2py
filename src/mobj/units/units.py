@@ -7,7 +7,7 @@ from unittest.mock import Mock
 
 from src.utils import Vec2
 
-from src.systems import movement, DieTask
+from src.systems import movement
 
 import pyglet
 import os
@@ -20,6 +20,8 @@ from profilehooks import timecall
 
 from ..layer import Layer
 from ...graphics.renderers.paletted import PalettedSprite
+from ...systems.tasks import UnitSpriteKind
+from ...systems.think import UnitAi
 
 jn = os.path.join
 MAP_PADDING = 8
@@ -164,11 +166,11 @@ class Units:
             unit.animations = animations
             unit.sprite = sprite
             unit.frame_id = 0
-            unit.sprite_kind = movement.UnitSpriteKind.idle
+            unit.sprite_kind = UnitSpriteKind.idle
 
             unit.dead = False
 
-            ai = movement.UnitAi()
+            ai = UnitAi()
 
             unit_record = self.unit_registry.units_by_id[utid]
             ai.rotation_phases = len(EDirection16) * 16
@@ -182,6 +184,12 @@ class Units:
 
             unit.ai = ai
             unit.EID = "u%d" % unit.unit_id
+            unit.vision = set()
+
+            def eid(unit: Unit):
+                return unit.EID
+
+            unit.__hash__ = eid.__get__(unit, Unit)
 
             def unit_redraw(unit: Unit):
                 state = unit.ai.sprite_kind
