@@ -104,17 +104,17 @@ PyMethodDef module_methods[] =
 };
 
 // struct representing the module
-static struct PyModuleDef routines =
+static struct PyModuleDef module =
 {
     PyModuleDef_HEAD_INIT, // Always initialize this member to PyModuleDef_HEAD_INIT
-    "src._c_extensions.routines", // module name
+    "src.formats.sprites._sprites_cext_func", // module name
     "Module description", // module description
     -1, // module size (more on this later)
     module_methods // methods associated with the module
 };
 
 // function that initializes the module
-PyMODINIT_FUNC PyInit_routines()
+PyMODINIT_FUNC PyInit__sprites_cext_func()
 {
-    return PyModule_Create(&routines);
+    return PyModule_Create(&module);
 }
