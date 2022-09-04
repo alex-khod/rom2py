@@ -20,7 +20,7 @@ cdef class Rect:
 #     int height
 
 cdef inline int has_intersect(Rect rect1, Rect rect2):
-    return rect2.left < rect1.right and rect2.right > rect2.left and rect2.top < rect1.bottom and rect2.bottom > rect1.top
+    return rect2.left < rect1.right and rect2.right > rect1.left and rect2.top < rect1.bottom and rect2.bottom > rect1.top
 
 # cdef vector[Rect] _filter_rects(Rect rect, vector[Rect] rects):
 #     return [x for x in rects if has_intersect(rect, x)]
