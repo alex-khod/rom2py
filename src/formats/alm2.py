@@ -100,6 +100,11 @@ class Alm2(RageOfMages2Alm):
 
         return [h00, h10, h11, h01]
 
+    def tile_avg_heights_at(self, tile_x, tile_y):
+        heights = self.tile_corner_heights_at(tile_x, tile_y)
+        avg = sum(heights) / len(heights)
+        return avg
+
     TERRAIN_WIDTH_PER_ID = 16
 
     def tile_id_to_tilecoords(self, tile_id):
@@ -133,7 +138,7 @@ class Alm2(RageOfMages2Alm):
         self._tilecoords = _tilecoords
         return _tilecoords
 
-    def __getitem__(self, kind):
+    def __getitem__(self, kind) -> RageOfMages2Alm.AlmSection:
         if isinstance(kind, str):
             return next(filter(lambda x: x.header.section_kind == self.section[kind], self.sections))
         return next(filter(lambda x: x.header.section_kind == kind, self.sections))
