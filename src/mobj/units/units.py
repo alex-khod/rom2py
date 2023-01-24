@@ -1,11 +1,13 @@
 import math
 from dataclasses import dataclass
 from enum import IntEnum
+import random
 from typing import Tuple
+from unittest.mock import Mock
 
 from src.utils import Vec2
 
-from src.systems import movement
+from src.systems import movement, DieTask
 
 import pyglet
 import os
@@ -130,6 +132,34 @@ class Units:
 
     @timecall
     def load_units(self, alm: Alm2):
+
+        pike = Resources["sfx", "units", "pike.wav"].content
+        sword = Resources["sfx", "units", "sword.wav"].content
+        soft = Resources["sfx", "units", "soft3.wav"].content
+        easy = Resources["sfx", "characters", "hildarius", "easy.wav"].content
+
+        def unitmk():
+            self = Mock()
+            self.x = 0
+            self.y = 0
+            self.type_id = 23
+            self.face_id = 0
+            self.flags = 0
+            self.flags2 = 0
+            self.server_id = 10230
+            self.player_id = 0
+            self.sack_id = 0
+            self.direction = 0
+            self.hp = 10
+            self.max_hp = 0
+            self.unit_id = 3999
+            self.group_id = 0
+            return self
+
+        mage = unitmk()
+        self.mage = mage
+        alm["units"].body.units.append(mage)
+
         for _, unit in enumerate(alm["units"].body.units):
             unit_template = self.databin.units_by_server_id[unit.server_id]
             utid = unit.type_id
@@ -163,6 +193,8 @@ class Units:
             ai.angle = unit.direction
             walk_ai = ai.walk_ai
 
+            unit.dead = False
+
             unit_record = self.unit_registry.units_by_id[utid]
 
             walk_ai.rotation_phases = len(EDirection16)
@@ -173,6 +205,9 @@ class Units:
             walk_ai.height = avg_height
             walk_ai.frame_id = 0
 
+            # unit.speed = 0.5
+            unit.speed = unit_template.speed / 20
+
             unit.ai = ai
             unit.EID = "u%d" % unit.unit_id
 
@@ -180,11 +215,20 @@ class Units:
                 state = unit.ai.state
                 angle = unit.ai.angle
                 state_animations = unit.animations[state]
+                angle = min(angle, len(state_animations) - 1)
                 angle_animations = state_animations[angle]
 
                 frame_id = unit.move_frame_id % len(angle_animations.frames)
                 frame = angle_animations.frames[frame_id]
                 texture = frame.image
+
+                if unit != mage:
+                    if state == 2:
+                        if unit.move_frame_id % (len(angle_animations.frames) * 2)  == 0:
+                            if mage.hp > 0:
+                                mage.hp -= 1
+                                random.choice([pike, sword, soft, easy]).play()
+                            unit.move_frame_id = 1
 
                 height = unit.ai.walk_ai.height
                 sprite_xy = unit.ai.walk_ai.xy

@@ -58,11 +58,14 @@ class UnitAi:
     walk_ai = None
     attack_ai = None
     tasks = None
+    commands = None
+    dead = False
 
     def __init__(self):
         self.walk_ai = WalkAi()
         self.attack_ai = AttackAi()
         self.tasks = deque()
+        self.commands = deque()
 
 
 directions_8_map = ((3, 4, 5),
@@ -165,13 +168,15 @@ class MoveTask:
         mobj.ai.angle = self.angle
         mobj.ai.state = UnitAiStates.move
 
+        # todo if movephases?
         if self._tick >= self.ticks_per_move:
             self._tick = 0
             mobj.move_frame_id += 1
         else:
             self._tick += 1
 
-        speed = 0.5
+        # speed = 0.5
+        speed = mobj.speed
         self.traversed += speed
         factor = self.traversed / self.distance
 
@@ -205,6 +210,101 @@ class MoveTask:
             return True
         return False
 
+@dataclass
+class MoveTask:
+    from_xy: Vec2
+    to_xy: Vec2
+    dxdy: Vec2
+    alm: Alm2
+    distance: float = 0
+    angle: int = 0
+    _tick = 0
+    traversed = 0
+    ticks_per_move = 4
+
+    def tick(self, mobj):
+        mobj.ai.angle = self.angle
+        mobj.ai.state = UnitAiStates.move
+
+        # todo if movephases?
+        if self._tick >= self.ticks_per_move:
+            self._tick = 0
+            mobj.move_frame_id += 1
+        else:
+            self._tick += 1
+
+        # speed = 0.5
+        speed = mobj.speed
+        self.traversed += speed
+        factor = self.traversed / self.distance
+
+        # Calc visual coords ---
+        walk_ai = mobj.ai.walk_ai
+        base_xy = self.from_xy * Vec2(TILE_SIZE, TILE_SIZE) + Vec2(TILE_SIZE // 2, TILE_SIZE // 2)
+        walk_ai.xy = base_xy + self.dxdy * Vec2(factor, factor) * Vec2(TILE_SIZE, TILE_SIZE)
+
+        alm = self.alm
+        avg_heights1 = alm.tile_avg_heights_at(*self.from_xy)
+        avg_heights2 = alm.tile_avg_heights_at(*self.to_xy)
+        ht1 = (1.0 - factor)
+        ht2 = factor
+        walk_ai.height = ht1 * avg_heights1 + ht2 * avg_heights2
+        # ---
+
+        if self.traversed >= self.distance:
+            walk_ai.tile_xy = self.to_xy
+
+            # TODO mobj_map
+            tile_x, tile_y = self.from_xy
+            alm.unit_map[tile_y][tile_x] = None
+            tile_x, tile_y = self.to_xy
+            alm.unit_map[tile_y][tile_x] = mobj
+
+            walk_ai.xy = self.to_xy * Vec2(TILE_SIZE, TILE_SIZE) + Vec2(TILE_SIZE // 2, TILE_SIZE // 2)
+            walk_ai.height = alm.tile_avg_heights_at(*walk_ai.tile_xy)
+
+            mobj.ai.state = UnitAiStates.idle
+            mobj.ai.angle = self.angle * 2
+            return True
+        return False
+
+@dataclass
+class AttackTask:
+    from_xy: Vec2
+    to_xy: Vec2
+    angle : int
+    distance: float = 0
+    _tick = 0
+    traversed = 0
+    ticks_per_move = 4
+
+    def tick(self, mobj):
+        mobj.ai.state = UnitAiStates.attack
+        mobj.ai.angle = self.angle
+        self._tick += 1
+        if self._tick % 4 != 0:
+            return False
+        mobj.move_frame_id += 1
+        return False
+
+@dataclass
+class DieTask:
+    angle : int
+    distance: float = 0
+    _tick = 0
+    traversed = 0
+    ticks_per_move = 4
+
+    def tick(self, mobj):
+        mobj.ai.state = UnitAiStates.die
+        mobj.ai.angle = self.angle
+        self._tick += 1
+        if self._tick % 4 != 0:
+            return False
+        mobj.move_frame_id += 1
+        if mobj.move_frame_id > 10:
+            return True
+        return False
 
 class ThinkSystem:
     think_stuff = {}
@@ -218,6 +318,9 @@ class ThinkSystem:
         if path:
             path = list(map(lambda x: Vec2(*x), path))
             mobj.ai.walk_ai.path = path
+            mobj.ai.tasks.clear()
+            # mobj.ai.commands.clear()
+            # mobj.ai.commands.append(0)
             self.think_stuff[mobj.EID] = mobj
 
     def tick(self):
@@ -243,6 +346,35 @@ class ThinkSystem:
                                 angle=angle, alm=movement.alm)
                 mobj.ai.tasks.append(task)
                 movement.moving_stuff[EID] = mobj
+
+            if not mobj.dead and not mobj.ai.walk_ai.path and not mobj.ai.tasks:
+                tile_xy = mobj.ai.walk_ai.tile_xy
+                target = None
+                for j in range(-1, 2):
+                    for i in range(-1, 2):
+                        if j == 0 and i == 0: continue
+                        check = Vec2(tile_xy.x + i, tile_xy.y + j)
+                        unit = movement.alm.unit_map[check.y][check.x]
+                        if unit:
+                            target = check
+                            break
+                    if target:
+                        break
+                if target:
+                    next_tile = target
+                    next_angle = movement.direction_to_tile(mobj.ai.walk_ai.tile_xy, next_tile,
+                                                            dirmap=directions_16_map)
+                    if mobj.ai.walk_ai.rotation_phases and mobj.ai.angle != next_angle:
+                        dphi = movement.calc_angle_direction(mobj.ai.angle, next_angle)
+                        task = RotationTask(mobj.ai.angle, next_angle, dphi, mobj)
+                        mobj.ai.tasks.append(task)
+                    attack_angle = movement.direction_to_tile(mobj.ai.walk_ai.tile_xy, next_tile,
+                                                            dirmap=directions_8_map)
+                    mobj.move_frame_id = 0
+                    task = AttackTask(tile_xy, next_tile, attack_angle)
+                    mobj.ai.tasks.append(task)
+                    movement.moving_stuff[EID] = mobj
+            # pop
 
         for EID in to_pop:
             think_stuff.pop(EID)
