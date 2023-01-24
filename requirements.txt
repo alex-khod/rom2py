@@ -1,0 +1,11 @@
+numpy
+Pillow
+https://github.com/pyglet/pyglet/archive/master.zip
+jupyterlab
+matplotlib
+nose
+nose-timer
+openpyxl
+kaitaistruct
+profilehooks
+numba

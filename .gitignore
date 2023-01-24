@@ -1,0 +1,25 @@
+.ipynb_checkpoints
+__pycache__
+
+# cython
+*.pyd
+build
+
+# runtime stuff
+256cache.bin
+error.log
+
+# ide stuff
+Debug
+Release
+x64
+.vs
+.idea
+
+# random stuff
+output
+sdl2
+snippets
+articles
+sprite_inject
+rom2books
