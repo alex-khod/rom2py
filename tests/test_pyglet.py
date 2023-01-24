@@ -5,8 +5,6 @@ from src.resources import get_resource_at_root
 class PygletTest(TestCase):
 
     def test_sprite_draw_raises_gl_exception_if_created_before_window(self):
-        import os
-        print(os.getcwd())
         path = get_resource_at_root("data", "lamp.jpg")
         image = pyglet.image.load(path)
         sprite = pyglet.sprite.Sprite(image)
