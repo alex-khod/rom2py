@@ -1,6 +1,6 @@
 from .base import ROM256, ROM256Frame, ROM16A, ROM16AFrame
 import numpy as np
-import src._c_extensions.routines as routines
+import src.formats.sprites._sprites_cext_func as sprites_cext
 
 
 class ROM256FrameCExt(ROM256Frame):
@@ -10,7 +10,7 @@ class ROM256FrameCExt(ROM256Frame):
         data_size = self._sprite.data_size
         w, h = self.width, self.height
         output = bytes(w * h)
-        routines.ROM256_to_color_indexes(data, output, data_size, w, h)
+        sprites_cext.ROM256_to_color_indexes(data, output, data_size, w, h)
         output = np.frombuffer(output, dtype="uint8").reshape(h, w)
         if self._x_flip:
             output = self.do_x_flip(output)
@@ -30,7 +30,7 @@ class ROM16AFrameCExt(ROM16AFrame):
         data_size = self._sprite.data_size
         w, h = self.width, self.height
         output = bytes(w * h * 2)
-        routines.ROM16A_to_color_indexes(data, output, data_size, w, h)
+        sprites_cext.ROM16A_to_color_indexes(data, output, data_size, w, h)
         output = np.frombuffer(output, dtype="uint8").reshape(h, w, 2)
         if self._x_flip:
             output = self.do_x_flip(output)
