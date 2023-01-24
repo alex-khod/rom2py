@@ -41,19 +41,15 @@ class Objects:
         Class that implements logical handling of map objects/obstacles.
     """
 
-    def __init__(self, alm, renderer):
-        self.alm = alm
+    def __init__(self, renderer):
         self.registry = Resources.special("objects.reg").content
         self.renderer = renderer
         self.animations = {}
         self.palettes = {}
         self.graphics = renderer.graphics
-        self.sprites = []
         self.prepare_objects()
-
-        w, h = alm.width, alm.height
-        self.layer = Layer(w, h)
-        self.load_objects(alm)
+        self.layer = None
+        self.sprites = None
 
     def prepare_objects(self):
         for oid, obj_record in self.registry.objects_by_id.items():
@@ -65,6 +61,8 @@ class Objects:
 
     @timecall
     def load_objects(self, alm: Alm2):
+        self.sprites = []
+        self.layer = Layer(alm.width, alm.height)
 
         self.frame_id = 0
 
@@ -85,6 +83,10 @@ class Objects:
                 image = animation.frames[0].image
                 sprite = self.renderer.add_sprite(*xy, animation=image, palette=palette)
                 sprite.z = sprite.y / (alm.height * 32) * 256
+
+                from src.rects import Rect
+                sprite.rect = Rect(*xy, *(xy + Vec2(image.width, image.height)))
+
                 # sprite.z = 1 - sprite.y / (alm.height * 32)
 
                 # sprite.z = 256 - tile_y * 4
@@ -98,7 +100,7 @@ class Objects:
                     texture = frame.image
                     sprite._set_texture(texture)
 
-                sprite.redraw = obj_redraw
+                sprite.redraw = obj_redraw.__get__(sprite, sprite.__class__)
 
                 self.layer[tile_xy] = sprite
                 self.sprites.append(sprite)

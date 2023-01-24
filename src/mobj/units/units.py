@@ -39,26 +39,21 @@ class Unit(Alm2.UnitEntry):
 
 class Units:
 
-    def __init__(self, alm, renderer):
-        self.alm = alm
-
+    def __init__(self, renderer):
         self.databin = Resources.special("data.bin").content
         self.unit_registry = Resources.special("units.reg").content
         # anim_registry = AnimRegistry()
         self.renderer = renderer
         self.graphics = renderer.graphics
-        self.sprites = []
         self.animations = {}
         self.palettes = {}
         self.unit_frames = {}
 
         self.prepare_units()
         # self.anim_showcase()
-
-        self.units = []
-        w, h = alm.width, alm.height
-        self.layer = Layer(w, h)
-        self.load_units(alm)
+        self.sprites = None
+        self.units = None
+        self.layer = None
 
     def prepare_units(self):
         units_by_id = list(self.unit_registry.units_by_id.items())
@@ -133,6 +128,9 @@ class Units:
 
     @timecall
     def load_units(self, alm: Alm2):
+        self.sprites = []
+        self.units = []
+        self.layer = Layer(alm.width, alm.height)
 
         for _, unit in enumerate(alm["units"].body.units):
             unit_template = self.databin.units_by_server_id[unit.server_id]
@@ -155,13 +153,18 @@ class Units:
             unit.xy = alm.tile_center_at(tile_xy)
             sprite = self.renderer.add_sprite(*unit.xy, animation=image, palette=palette)
             sprite.animation = animation
+
+            from src.rects import Rect
+
+            unit.rect = Rect(*unit.xy, *(unit.xy + Vec2(image.width, image.height)))
+
             self.sprites.append(sprite)
 
             # TODO in dire need of a factory
             unit.animations = animations
             unit.sprite = sprite
             unit.frame_id = 0
-            unit.state = movement.UnitAiStates.idle
+            unit.sprite_kind = movement.UnitSpriteKind.idle
 
             unit.dead = False
 
@@ -181,7 +184,7 @@ class Units:
             unit.EID = "u%d" % unit.unit_id
 
             def unit_redraw(unit: Unit):
-                state = unit.ai.state
+                state = unit.ai.sprite_kind
                 divisor = 16 if state.name == "idle" else 32
                 angle = unit.ai.angle // divisor
                 state_animations = unit.animations[state]
@@ -201,7 +204,7 @@ class Units:
 
                 self.renderer.redraw_shadow(unit.sprite)
 
-            unit.redraw = unit_redraw
+            unit.redraw = unit_redraw.__get__(unit, Unit)
 
             self.units.append(unit)
             self.layer[tile_xy] = unit
