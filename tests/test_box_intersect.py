@@ -1,6 +1,19 @@
 from . import TestCase
 from src.utils import Box, has_intersection, get_intersection
 
+class TestboxHas(TestCase):
+
+    def test_intersection(self):
+        box1 = Box(0, 0, 4, 4)
+        box2 = Box(-2, -2, 4, 4)
+        res = has_intersection(box1, box2)
+        assert res is True
+
+    def test_no_intersection(self):
+        box1 = Box(0, 0, 4, 4)
+        box2 = Box(-2, -2, 2, 2)
+        res = has_intersection(box1, box2)
+        assert res is False
 
 class Testbox(TestCase):
 

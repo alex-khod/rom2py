@@ -142,7 +142,7 @@ class Box:
 
     @property
     def top(self):
-        return self.y + self.h
+        return self.y
 
     @property
     def right(self):
@@ -150,11 +150,11 @@ class Box:
 
     @property
     def bottom(self):
-        return self.y
+        return self.y + self.h
 
 
 def has_intersection(box1: Box, box2: Box):
-    return box2.left < box1.right and box2.right > box1.left and box2.top > box1.bottom and box2.bottom < box1.top
+    return box2.left < box1.right and box2.right > box1.left and box2.top < box1.bottom and box2.bottom > box1.top
 
 
 def get_intersection(box1: Box, box2: Box):
