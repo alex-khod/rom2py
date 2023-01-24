@@ -1,11 +1,10 @@
 import pyglet
 import os
-from src.shaders import get_sprite_shader
+from src.graphics.shaders import get_sprite_shader
 from pyglet.gl import *
-from src.textures import TextureAtlas, TextureBin, Texture
+from src.graphics.textures import TextureAtlas, TextureBin, Texture
 
 jn = os.path.join
-import numpy as np
 
 MAP_PADDING = 8
 TILE_SIZE = 32
@@ -13,68 +12,52 @@ TILE_SIZE = 32
 
 class PalettedSpriteRenderer:
 
-    def __init__(self, batch=None):
+    def __init__(self, graphics, batch=None):
         self.batch = batch or pyglet.graphics.Batch()
+        self.graphics = graphics
         self.atlases = {}
-
-        self.palette_atlas = TextureAtlas(2048, 2048)
-        self.palettes = {}
         self.sprites = []
         self._first_image = None
 
         self.mem_usage_total = 0
         self.mem_usage_real = 0
 
-        def texture_factory(width, height):
-            self.mem_usage_total += width * height
-            tex = Texture.create(width, height, internalformat=1, fmt=GL_RED)
-            return tex
 
-        def atlas_factory(width, height):
-            return TextureAtlas(width, height, texture_factory=texture_factory)
-
-        self.atlas = TextureBin(atlas_factory=atlas_factory)
         # self.atlas = TextureAtlas(4096 * 10, 4096 * 10, texture_factory=texture_factory)
         # self.mem_usage_total += self.atlas.texture.width * self.atlas.texture.height
 
-    def a256_to_frames(self, a256, record, sprite_key):
-        frames = []
-        w, h = record["width"], record["height"]
-        cx, cy = record["centerx"], record["centery"]
-        atlas = self.atlas
-        for image in a256:
-            image = image.to_r_image_data()
-            if not self._first_image:
-                self._first_image = image
-
-            self.mem_usage_real += image.width * image.height
-
-            # blit to atlas texture and get reference to blitted region
-            image = atlas.add(image)
-            # anchor should be set after blitting to atlas
-            image.anchor_x = cx + (-w + image.width) // 2
-            image.anchor_y = cy + (-h + image.height) // 2
-            frames.append(image)
-        return frames
-
-    def prepare_palette(self, palette, palette_key):
-        palette_data = palette.to_rgb_image_data()
-        self.palettes[palette_key] = self.palette_atlas.add(palette_data)
-
-    def add_sprite(self, animation, x, y, palette_key):
+    def add_sprite(self, x, y, animation, palette):
         # tile_heights = alm.heights_for_tile(tile_x, tile_y)
         # avg_height = sum(tile_heights) / 4
         avg_height = 0
-        palette_tex = self.palettes[palette_key]
-        sprite = PalettedSprite(animation, x, y, 0, batch=self.batch, palette_tex=palette_tex)
-        sprite.palette = palette_tex
+        # frame = animation.frames[0].image
+        # frame = animation[0]
+        sprite2 = PalettedSprite(animation, x, y, 0, batch=self.batch, palette_tex=palette)
+        # sprite2.image.width = 64
+        sprite2.color = (0, 0, 0)
+        sprite2.opacity = 127
+
+        img = sprite2._texture
+        x1 = -img.anchor_x
+        y1 = -img.anchor_y
+        x2 = x1 + img.width
+        y2 = y1 + img.height
+
+        offset = img.height * 0.3
+        offset2 = -offset * (1 - 0.3)
+
+        vertices = (x1+offset, y1, x2+offset, y1, x2, y2, x1, y2)
+        sprite2._vertex_list.position[:] = vertices
+
+        sprite = PalettedSprite(animation, x, y, 0, batch=self.batch, palette_tex=palette)
         self.sprites.append(sprite)
+        self.sprites.append(sprite2)
         return sprite
 
     def draw(self):
         glClearColor(255, 255, 255, 255)
         glActiveTexture(GL_TEXTURE1)
-        glBindTexture(self.palette_atlas.texture.target, self.palette_atlas.texture.id)
+        glBindTexture(self.graphics.palette_atlas.texture.target, self.graphics.palette_atlas.texture.id)
         self.batch.draw()
         # self._first_image.blit(0, 0)
         # self.atlas.texture.blit(0, 512)
@@ -101,6 +84,7 @@ class PalettedSprite(pyglet.sprite.Sprite):
             translate=('f', (self._x, self._y, self._z) * 4),
             tex_coords=('f', self._texture.tex_coords),
             pal_coords=('f', self._palette_tex.tex_coords[:3] * 4),
+            colors=('Bn', (*self._rgb, int(self._opacity)) * 4),
         )
         self._update_position()
 

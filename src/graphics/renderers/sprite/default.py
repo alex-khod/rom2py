@@ -1,5 +1,5 @@
 import pyglet
-from src.textures import TextureBin
+from src.graphics.textures import TextureBin
 
 MAP_PADDING = 8
 TILE_SIZE = 32
