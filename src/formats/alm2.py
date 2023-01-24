@@ -4,7 +4,10 @@ from functools import lru_cache
 
 RageOfMages2Alm = rage_of_mages_2_alm.RageOfMages2Alm
 
+
 class Alm2(RageOfMages2Alm):
+    _heights = None
+    _column_heights = None
 
     @property
     def section(self):
@@ -20,13 +23,25 @@ class Alm2(RageOfMages2Alm):
 
     @property
     def heights(self):
-        if hasattr(self, '_heights'):
+        if self._heights is not None:
             return self._heights
         w, h = self.width, self.height
-        heights = self["heights"].body.heights
-        _heights = [heights[j * w:(j + 1) * w] + [0] for j in range(h)] + [[0] * (w + 1)]
+        raw_heights = self["heights"].body.heights
+        _heights = [raw_heights[j * w:(j + 1) * w] + [0] for j in range(h)]
+        padding_row = [[0] * (w + 1)]
+        _heights += padding_row
         self._heights = _heights
         return _heights
+
+    def heights_for_column(self, tile_x):
+        if self._column_heights is not None:
+            return self._column_heights[tile_x]
+
+        w, h = self.width, self.height
+
+        heights = self.heights
+        self._column_heights = [[heights[y][x] for y in range(h)] for x in range(w)]
+        return self._column_heights[tile_x]
 
     def heights_for_tile(self, tile_x, tile_y):
         """
