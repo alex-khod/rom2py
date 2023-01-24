@@ -1,2 +1,2 @@
-from .sprite.default import DefaultSpriteRenderer
-from .sprite.paletted import PalettedSpriteRenderer
+from .default import DefaultSpriteRenderer
+from .paletted import PalettedSpriteRenderer

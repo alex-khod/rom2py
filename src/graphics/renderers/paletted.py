@@ -45,13 +45,12 @@ class PalettedSpriteRenderer:
 
         offset = img.height * 0.3
         offset2 = -offset * (1 - 0.3)
-
         vertices = (x1+offset, y1, x2+offset, y1, x2, y2, x1, y2)
         sprite2._vertex_list.position[:] = vertices
 
         sprite = PalettedSprite(animation, x, y, 0, batch=self.batch, palette_tex=palette)
+        sprite.shadow = sprite2
         self.sprites.append(sprite)
-        self.sprites.append(sprite2)
         return sprite
 
     def draw(self):
