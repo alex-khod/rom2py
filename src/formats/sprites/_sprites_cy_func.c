@@ -1142,9 +1142,6 @@ static void __Pyx_AddTraceback(const char *funcname, int c_line,
 /* CIntFromPy.proto */
 static CYTHON_INLINE int __Pyx_PyInt_As_int(PyObject *);
 
-/* CIntFromPy.proto */
-static CYTHON_INLINE char __Pyx_PyInt_As_char(PyObject *);
-
 /* CIntToPy.proto */
 static CYTHON_INLINE PyObject* __Pyx_PyInt_From_int(int value);
 
@@ -1190,8 +1187,6 @@ static const char __pyx_k_w[] = "w";
 static const char __pyx_k_x[] = "x";
 static const char __pyx_k_y[] = "y";
 static const char __pyx_k_np[] = "np";
-static const char __pyx_k_x0[] = "x0";
-static const char __pyx_k_y0[] = "y0";
 static const char __pyx_k_idx[] = "idx";
 static const char __pyx_k_val[] = "val";
 static const char __pyx_k_byte[] = "_byte";
@@ -1208,14 +1203,13 @@ static const char __pyx_k_zeros[] = "zeros";
 static const char __pyx_k_import[] = "__import__";
 static const char __pyx_k_offset[] = "offset";
 static const char __pyx_k_output[] = "output";
-static const char __pyx_k_x_flip[] = "x_flip";
-static const char __pyx_k_target_x[] = "target_x";
 static const char __pyx_k_data_size[] = "data_size";
-static const char __pyx_k_to_colors[] = "to_colors";
 static const char __pyx_k_cline_in_traceback[] = "cline_in_traceback";
+static const char __pyx_k_ROM256_to_color_indexes[] = "ROM256_to_color_indexes";
 static const char __pyx_k_src_formats_sprites__sprites_cy[] = "src\\formats\\sprites\\_sprites_cy_func.pyx";
 static const char __pyx_k_src_formats_sprites__sprites_cy_2[] = "src.formats.sprites._sprites_cy_func";
 static PyObject *__pyx_n_s_;
+static PyObject *__pyx_n_s_ROM256_to_color_indexes;
 static PyObject *__pyx_n_s_byte;
 static PyObject *__pyx_n_s_cline_in_traceback;
 static PyObject *__pyx_n_s_code;
@@ -1234,19 +1228,14 @@ static PyObject *__pyx_n_s_output;
 static PyObject *__pyx_n_s_range;
 static PyObject *__pyx_kp_s_src_formats_sprites__sprites_cy;
 static PyObject *__pyx_n_s_src_formats_sprites__sprites_cy_2;
-static PyObject *__pyx_n_s_target_x;
 static PyObject *__pyx_n_s_test;
-static PyObject *__pyx_n_s_to_colors;
 static PyObject *__pyx_n_s_uint8;
 static PyObject *__pyx_n_s_val;
 static PyObject *__pyx_n_s_w;
 static PyObject *__pyx_n_s_x;
-static PyObject *__pyx_n_s_x0;
-static PyObject *__pyx_n_s_x_flip;
 static PyObject *__pyx_n_s_y;
-static PyObject *__pyx_n_s_y0;
 static PyObject *__pyx_n_s_zeros;
-static PyObject *__pyx_pf_3src_7formats_7sprites_16_sprites_cy_func_to_colors(CYTHON_UNUSED PyObject *__pyx_self, char *__pyx_v_data, int __pyx_v_data_size, int __pyx_v_w, int __pyx_v_h, Py_ssize_t __pyx_v_x0, Py_ssize_t __pyx_v_y0, char __pyx_v_x_flip); /* proto */
+static PyObject *__pyx_pf_3src_7formats_7sprites_16_sprites_cy_func_ROM256_to_color_indexes(CYTHON_UNUSED PyObject *__pyx_self, char *__pyx_v_data, int __pyx_v_data_size, int __pyx_v_w, int __pyx_v_h); /* proto */
 static PyObject *__pyx_tuple__2;
 static PyObject *__pyx_codeobj__3;
 /* Late includes */
@@ -1254,41 +1243,32 @@ static PyObject *__pyx_codeobj__3;
 /* "src/formats/sprites/_sprites_cy_func.pyx":6
  * import numpy as np
  * 
- * def to_colors(char* data, int data_size, int w, int h, Py_ssize_t x0, Py_ssize_t  y0, char x_flip):             # <<<<<<<<<<<<<<
+ * def ROM256_to_color_indexes(char* data, int data_size, int w, int h):             # <<<<<<<<<<<<<<
  *     output = np.zeros((h, w), dtype=np.uint8)
  *     cdef Py_ssize_t offset = 0
  */
 
 /* Python wrapper */
-static PyObject *__pyx_pw_3src_7formats_7sprites_16_sprites_cy_func_1to_colors(PyObject *__pyx_self, PyObject *__pyx_args, PyObject *__pyx_kwds); /*proto*/
-static PyMethodDef __pyx_mdef_3src_7formats_7sprites_16_sprites_cy_func_1to_colors = {"to_colors", (PyCFunction)(void*)(PyCFunctionWithKeywords)__pyx_pw_3src_7formats_7sprites_16_sprites_cy_func_1to_colors, METH_VARARGS|METH_KEYWORDS, 0};
-static PyObject *__pyx_pw_3src_7formats_7sprites_16_sprites_cy_func_1to_colors(PyObject *__pyx_self, PyObject *__pyx_args, PyObject *__pyx_kwds) {
+static PyObject *__pyx_pw_3src_7formats_7sprites_16_sprites_cy_func_1ROM256_to_color_indexes(PyObject *__pyx_self, PyObject *__pyx_args, PyObject *__pyx_kwds); /*proto*/
+static PyMethodDef __pyx_mdef_3src_7formats_7sprites_16_sprites_cy_func_1ROM256_to_color_indexes = {"ROM256_to_color_indexes", (PyCFunction)(void*)(PyCFunctionWithKeywords)__pyx_pw_3src_7formats_7sprites_16_sprites_cy_func_1ROM256_to_color_indexes, METH_VARARGS|METH_KEYWORDS, 0};
+static PyObject *__pyx_pw_3src_7formats_7sprites_16_sprites_cy_func_1ROM256_to_color_indexes(PyObject *__pyx_self, PyObject *__pyx_args, PyObject *__pyx_kwds) {
   char *__pyx_v_data;
   int __pyx_v_data_size;
   int __pyx_v_w;
   int __pyx_v_h;
-  Py_ssize_t __pyx_v_x0;
-  Py_ssize_t __pyx_v_y0;
-  char __pyx_v_x_flip;
   int __pyx_lineno = 0;
   const char *__pyx_filename = NULL;
   int __pyx_clineno = 0;
   PyObject *__pyx_r = 0;
   __Pyx_RefNannyDeclarations
-  __Pyx_RefNannySetupContext("to_colors (wrapper)", 0);
+  __Pyx_RefNannySetupContext("ROM256_to_color_indexes (wrapper)", 0);
   {
-    static PyObject **__pyx_pyargnames[] = {&__pyx_n_s_data,&__pyx_n_s_data_size,&__pyx_n_s_w,&__pyx_n_s_h,&__pyx_n_s_x0,&__pyx_n_s_y0,&__pyx_n_s_x_flip,0};
-    PyObject* values[7] = {0,0,0,0,0,0,0};
+    static PyObject **__pyx_pyargnames[] = {&__pyx_n_s_data,&__pyx_n_s_data_size,&__pyx_n_s_w,&__pyx_n_s_h,0};
+    PyObject* values[4] = {0,0,0,0};
     if (unlikely(__pyx_kwds)) {
       Py_ssize_t kw_args;
       const Py_ssize_t pos_args = PyTuple_GET_SIZE(__pyx_args);
       switch (pos_args) {
-        case  7: values[6] = PyTuple_GET_ITEM(__pyx_args, 6);
-        CYTHON_FALLTHROUGH;
-        case  6: values[5] = PyTuple_GET_ITEM(__pyx_args, 5);
-        CYTHON_FALLTHROUGH;
-        case  5: values[4] = PyTuple_GET_ITEM(__pyx_args, 4);
-        CYTHON_FALLTHROUGH;
         case  4: values[3] = PyTuple_GET_ITEM(__pyx_args, 3);
         CYTHON_FALLTHROUGH;
         case  3: values[2] = PyTuple_GET_ITEM(__pyx_args, 2);
@@ -1309,82 +1289,57 @@ static PyObject *__pyx_pw_3src_7formats_7sprites_16_sprites_cy_func_1to_colors(P
         case  1:
         if (likely((values[1] = __Pyx_PyDict_GetItemStr(__pyx_kwds, __pyx_n_s_data_size)) != 0)) kw_args--;
         else {
-          __Pyx_RaiseArgtupleInvalid("to_colors", 1, 7, 7, 1); __PYX_ERR(0, 6, __pyx_L3_error)
+          __Pyx_RaiseArgtupleInvalid("ROM256_to_color_indexes", 1, 4, 4, 1); __PYX_ERR(0, 6, __pyx_L3_error)
         }
         CYTHON_FALLTHROUGH;
         case  2:
         if (likely((values[2] = __Pyx_PyDict_GetItemStr(__pyx_kwds, __pyx_n_s_w)) != 0)) kw_args--;
         else {
-          __Pyx_RaiseArgtupleInvalid("to_colors", 1, 7, 7, 2); __PYX_ERR(0, 6, __pyx_L3_error)
+          __Pyx_RaiseArgtupleInvalid("ROM256_to_color_indexes", 1, 4, 4, 2); __PYX_ERR(0, 6, __pyx_L3_error)
         }
         CYTHON_FALLTHROUGH;
         case  3:
         if (likely((values[3] = __Pyx_PyDict_GetItemStr(__pyx_kwds, __pyx_n_s_h)) != 0)) kw_args--;
         else {
-          __Pyx_RaiseArgtupleInvalid("to_colors", 1, 7, 7, 3); __PYX_ERR(0, 6, __pyx_L3_error)
-        }
-        CYTHON_FALLTHROUGH;
-        case  4:
-        if (likely((values[4] = __Pyx_PyDict_GetItemStr(__pyx_kwds, __pyx_n_s_x0)) != 0)) kw_args--;
-        else {
-          __Pyx_RaiseArgtupleInvalid("to_colors", 1, 7, 7, 4); __PYX_ERR(0, 6, __pyx_L3_error)
-        }
-        CYTHON_FALLTHROUGH;
-        case  5:
-        if (likely((values[5] = __Pyx_PyDict_GetItemStr(__pyx_kwds, __pyx_n_s_y0)) != 0)) kw_args--;
-        else {
-          __Pyx_RaiseArgtupleInvalid("to_colors", 1, 7, 7, 5); __PYX_ERR(0, 6, __pyx_L3_error)
-        }
-        CYTHON_FALLTHROUGH;
-        case  6:
-        if (likely((values[6] = __Pyx_PyDict_GetItemStr(__pyx_kwds, __pyx_n_s_x_flip)) != 0)) kw_args--;
-        else {
-          __Pyx_RaiseArgtupleInvalid("to_colors", 1, 7, 7, 6); __PYX_ERR(0, 6, __pyx_L3_error)
+          __Pyx_RaiseArgtupleInvalid("ROM256_to_color_indexes", 1, 4, 4, 3); __PYX_ERR(0, 6, __pyx_L3_error)
         }
       }
       if (unlikely(kw_args > 0)) {
-        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_pyargnames, 0, values, pos_args, "to_colors") < 0)) __PYX_ERR(0, 6, __pyx_L3_error)
+        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_pyargnames, 0, values, pos_args, "ROM256_to_color_indexes") < 0)) __PYX_ERR(0, 6, __pyx_L3_error)
       }
-    } else if (PyTuple_GET_SIZE(__pyx_args) != 7) {
+    } else if (PyTuple_GET_SIZE(__pyx_args) != 4) {
       goto __pyx_L5_argtuple_error;
     } else {
       values[0] = PyTuple_GET_ITEM(__pyx_args, 0);
       values[1] = PyTuple_GET_ITEM(__pyx_args, 1);
       values[2] = PyTuple_GET_ITEM(__pyx_args, 2);
       values[3] = PyTuple_GET_ITEM(__pyx_args, 3);
-      values[4] = PyTuple_GET_ITEM(__pyx_args, 4);
-      values[5] = PyTuple_GET_ITEM(__pyx_args, 5);
-      values[6] = PyTuple_GET_ITEM(__pyx_args, 6);
     }
     __pyx_v_data = __Pyx_PyObject_AsWritableString(values[0]); if (unlikely((!__pyx_v_data) && PyErr_Occurred())) __PYX_ERR(0, 6, __pyx_L3_error)
     __pyx_v_data_size = __Pyx_PyInt_As_int(values[1]); if (unlikely((__pyx_v_data_size == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 6, __pyx_L3_error)
     __pyx_v_w = __Pyx_PyInt_As_int(values[2]); if (unlikely((__pyx_v_w == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 6, __pyx_L3_error)
     __pyx_v_h = __Pyx_PyInt_As_int(values[3]); if (unlikely((__pyx_v_h == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 6, __pyx_L3_error)
-    __pyx_v_x0 = __Pyx_PyIndex_AsSsize_t(values[4]); if (unlikely((__pyx_v_x0 == (Py_ssize_t)-1) && PyErr_Occurred())) __PYX_ERR(0, 6, __pyx_L3_error)
-    __pyx_v_y0 = __Pyx_PyIndex_AsSsize_t(values[5]); if (unlikely((__pyx_v_y0 == (Py_ssize_t)-1) && PyErr_Occurred())) __PYX_ERR(0, 6, __pyx_L3_error)
-    __pyx_v_x_flip = __Pyx_PyInt_As_char(values[6]); if (unlikely((__pyx_v_x_flip == (char)-1) && PyErr_Occurred())) __PYX_ERR(0, 6, __pyx_L3_error)
   }
   goto __pyx_L4_argument_unpacking_done;
   __pyx_L5_argtuple_error:;
-  __Pyx_RaiseArgtupleInvalid("to_colors", 1, 7, 7, PyTuple_GET_SIZE(__pyx_args)); __PYX_ERR(0, 6, __pyx_L3_error)
+  __Pyx_RaiseArgtupleInvalid("ROM256_to_color_indexes", 1, 4, 4, PyTuple_GET_SIZE(__pyx_args)); __PYX_ERR(0, 6, __pyx_L3_error)
   __pyx_L3_error:;
-  __Pyx_AddTraceback("src.formats.sprites._sprites_cy_func.to_colors", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __Pyx_AddTraceback("src.formats.sprites._sprites_cy_func.ROM256_to_color_indexes", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __Pyx_RefNannyFinishContext();
   return NULL;
   __pyx_L4_argument_unpacking_done:;
-  __pyx_r = __pyx_pf_3src_7formats_7sprites_16_sprites_cy_func_to_colors(__pyx_self, __pyx_v_data, __pyx_v_data_size, __pyx_v_w, __pyx_v_h, __pyx_v_x0, __pyx_v_y0, __pyx_v_x_flip);
+  __pyx_r = __pyx_pf_3src_7formats_7sprites_16_sprites_cy_func_ROM256_to_color_indexes(__pyx_self, __pyx_v_data, __pyx_v_data_size, __pyx_v_w, __pyx_v_h);
 
   /* function exit code */
   __Pyx_RefNannyFinishContext();
   return __pyx_r;
 }
 
-static PyObject *__pyx_pf_3src_7formats_7sprites_16_sprites_cy_func_to_colors(CYTHON_UNUSED PyObject *__pyx_self, char *__pyx_v_data, int __pyx_v_data_size, int __pyx_v_w, int __pyx_v_h, Py_ssize_t __pyx_v_x0, Py_ssize_t __pyx_v_y0, char __pyx_v_x_flip) {
+static PyObject *__pyx_pf_3src_7formats_7sprites_16_sprites_cy_func_ROM256_to_color_indexes(CYTHON_UNUSED PyObject *__pyx_self, char *__pyx_v_data, int __pyx_v_data_size, int __pyx_v_w, int __pyx_v_h) {
   PyObject *__pyx_v_output = NULL;
   Py_ssize_t __pyx_v_offset;
   Py_ssize_t __pyx_v_x;
   Py_ssize_t __pyx_v_y;
-  Py_ssize_t __pyx_v_target_x;
   char __pyx_v__byte;
   long __pyx_v_val;
   long __pyx_v_code;
@@ -1401,15 +1356,14 @@ static PyObject *__pyx_pf_3src_7formats_7sprites_16_sprites_cy_func_to_colors(CY
   long __pyx_t_7;
   long __pyx_t_8;
   long __pyx_t_9;
-  Py_ssize_t __pyx_t_10;
   int __pyx_lineno = 0;
   const char *__pyx_filename = NULL;
   int __pyx_clineno = 0;
-  __Pyx_RefNannySetupContext("to_colors", 0);
+  __Pyx_RefNannySetupContext("ROM256_to_color_indexes", 0);
 
   /* "src/formats/sprites/_sprites_cy_func.pyx":7
  * 
- * def to_colors(char* data, int data_size, int w, int h, Py_ssize_t x0, Py_ssize_t  y0, char x_flip):
+ * def ROM256_to_color_indexes(char* data, int data_size, int w, int h):
  *     output = np.zeros((h, w), dtype=np.uint8)             # <<<<<<<<<<<<<<
  *     cdef Py_ssize_t offset = 0
  *     cdef Py_ssize_t  x = 0
@@ -1454,7 +1408,7 @@ static PyObject *__pyx_pf_3src_7formats_7sprites_16_sprites_cy_func_to_colors(CY
   __pyx_t_5 = 0;
 
   /* "src/formats/sprites/_sprites_cy_func.pyx":8
- * def to_colors(char* data, int data_size, int w, int h, Py_ssize_t x0, Py_ssize_t  y0, char x_flip):
+ * def ROM256_to_color_indexes(char* data, int data_size, int w, int h):
  *     output = np.zeros((h, w), dtype=np.uint8)
  *     cdef Py_ssize_t offset = 0             # <<<<<<<<<<<<<<
  *     cdef Py_ssize_t  x = 0
@@ -1467,7 +1421,7 @@ static PyObject *__pyx_pf_3src_7formats_7sprites_16_sprites_cy_func_to_colors(CY
  *     cdef Py_ssize_t offset = 0
  *     cdef Py_ssize_t  x = 0             # <<<<<<<<<<<<<<
  *     cdef Py_ssize_t  y = 0
- *     cdef Py_ssize_t  target_x
+ * 
  */
   __pyx_v_x = 0;
 
@@ -1475,13 +1429,13 @@ static PyObject *__pyx_pf_3src_7formats_7sprites_16_sprites_cy_func_to_colors(CY
  *     cdef Py_ssize_t offset = 0
  *     cdef Py_ssize_t  x = 0
  *     cdef Py_ssize_t  y = 0             # <<<<<<<<<<<<<<
- *     cdef Py_ssize_t  target_x
  * 
+ *     while offset < data_size:
  */
   __pyx_v_y = 0;
 
-  /* "src/formats/sprites/_sprites_cy_func.pyx":13
- *     cdef Py_ssize_t  target_x
+  /* "src/formats/sprites/_sprites_cy_func.pyx":12
+ *     cdef Py_ssize_t  y = 0
  * 
  *     while offset < data_size:             # <<<<<<<<<<<<<<
  *         _byte = data[offset]
@@ -1491,7 +1445,7 @@ static PyObject *__pyx_pf_3src_7formats_7sprites_16_sprites_cy_func_to_colors(CY
     __pyx_t_6 = ((__pyx_v_offset < __pyx_v_data_size) != 0);
     if (!__pyx_t_6) break;
 
-    /* "src/formats/sprites/_sprites_cy_func.pyx":14
+    /* "src/formats/sprites/_sprites_cy_func.pyx":13
  * 
  *     while offset < data_size:
  *         _byte = data[offset]             # <<<<<<<<<<<<<<
@@ -1500,7 +1454,7 @@ static PyObject *__pyx_pf_3src_7formats_7sprites_16_sprites_cy_func_to_colors(CY
  */
     __pyx_v__byte = (__pyx_v_data[__pyx_v_offset]);
 
-    /* "src/formats/sprites/_sprites_cy_func.pyx":15
+    /* "src/formats/sprites/_sprites_cy_func.pyx":14
  *     while offset < data_size:
  *         _byte = data[offset]
  *         val, code = _byte & 0x3f, _byte & 0xc0             # <<<<<<<<<<<<<<
@@ -1512,7 +1466,7 @@ static PyObject *__pyx_pf_3src_7formats_7sprites_16_sprites_cy_func_to_colors(CY
     __pyx_v_val = __pyx_t_7;
     __pyx_v_code = __pyx_t_8;
 
-    /* "src/formats/sprites/_sprites_cy_func.pyx":16
+    /* "src/formats/sprites/_sprites_cy_func.pyx":15
  *         _byte = data[offset]
  *         val, code = _byte & 0x3f, _byte & 0xc0
  *         offset += 1             # <<<<<<<<<<<<<<
@@ -1521,7 +1475,7 @@ static PyObject *__pyx_pf_3src_7formats_7sprites_16_sprites_cy_func_to_colors(CY
  */
     __pyx_v_offset = (__pyx_v_offset + 1);
 
-    /* "src/formats/sprites/_sprites_cy_func.pyx":17
+    /* "src/formats/sprites/_sprites_cy_func.pyx":16
  *         val, code = _byte & 0x3f, _byte & 0xc0
  *         offset += 1
  *         if code > 0:             # <<<<<<<<<<<<<<
@@ -1531,7 +1485,7 @@ static PyObject *__pyx_pf_3src_7formats_7sprites_16_sprites_cy_func_to_colors(CY
     __pyx_t_6 = ((__pyx_v_code > 0) != 0);
     if (__pyx_t_6) {
 
-      /* "src/formats/sprites/_sprites_cy_func.pyx":19
+      /* "src/formats/sprites/_sprites_cy_func.pyx":18
  *         if code > 0:
  *             # skip transparent bytes
  *             if code == 0x40:             # <<<<<<<<<<<<<<
@@ -1541,7 +1495,7 @@ static PyObject *__pyx_pf_3src_7formats_7sprites_16_sprites_cy_func_to_colors(CY
       __pyx_t_6 = ((__pyx_v_code == 0x40) != 0);
       if (__pyx_t_6) {
 
-        /* "src/formats/sprites/_sprites_cy_func.pyx":20
+        /* "src/formats/sprites/_sprites_cy_func.pyx":19
  *             # skip transparent bytes
  *             if code == 0x40:
  *                 y += val             # <<<<<<<<<<<<<<
@@ -1550,7 +1504,7 @@ static PyObject *__pyx_pf_3src_7formats_7sprites_16_sprites_cy_func_to_colors(CY
  */
         __pyx_v_y = (__pyx_v_y + __pyx_v_val);
 
-        /* "src/formats/sprites/_sprites_cy_func.pyx":19
+        /* "src/formats/sprites/_sprites_cy_func.pyx":18
  *         if code > 0:
  *             # skip transparent bytes
  *             if code == 0x40:             # <<<<<<<<<<<<<<
@@ -1560,7 +1514,7 @@ static PyObject *__pyx_pf_3src_7formats_7sprites_16_sprites_cy_func_to_colors(CY
         goto __pyx_L6;
       }
 
-      /* "src/formats/sprites/_sprites_cy_func.pyx":22
+      /* "src/formats/sprites/_sprites_cy_func.pyx":21
  *                 y += val
  *             else:
  *                 x += val             # <<<<<<<<<<<<<<
@@ -1572,7 +1526,7 @@ static PyObject *__pyx_pf_3src_7formats_7sprites_16_sprites_cy_func_to_colors(CY
       }
       __pyx_L6:;
 
-      /* "src/formats/sprites/_sprites_cy_func.pyx":23
+      /* "src/formats/sprites/_sprites_cy_func.pyx":22
  *             else:
  *                 x += val
  *             continue             # <<<<<<<<<<<<<<
@@ -1581,7 +1535,7 @@ static PyObject *__pyx_pf_3src_7formats_7sprites_16_sprites_cy_func_to_colors(CY
  */
       goto __pyx_L3_continue;
 
-      /* "src/formats/sprites/_sprites_cy_func.pyx":17
+      /* "src/formats/sprites/_sprites_cy_func.pyx":16
  *         val, code = _byte & 0x3f, _byte & 0xc0
  *         offset += 1
  *         if code > 0:             # <<<<<<<<<<<<<<
@@ -1590,7 +1544,7 @@ static PyObject *__pyx_pf_3src_7formats_7sprites_16_sprites_cy_func_to_colors(CY
  */
     }
 
-    /* "src/formats/sprites/_sprites_cy_func.pyx":25
+    /* "src/formats/sprites/_sprites_cy_func.pyx":24
  *             continue
  * 
  *         for _ in range(val):             # <<<<<<<<<<<<<<
@@ -1602,7 +1556,7 @@ static PyObject *__pyx_pf_3src_7formats_7sprites_16_sprites_cy_func_to_colors(CY
     for (__pyx_t_9 = 0; __pyx_t_9 < __pyx_t_7; __pyx_t_9+=1) {
       __pyx_v__ = __pyx_t_9;
 
-      /* "src/formats/sprites/_sprites_cy_func.pyx":26
+      /* "src/formats/sprites/_sprites_cy_func.pyx":25
  * 
  *         for _ in range(val):
  *             y += x // w             # <<<<<<<<<<<<<<
@@ -1611,64 +1565,50 @@ static PyObject *__pyx_pf_3src_7formats_7sprites_16_sprites_cy_func_to_colors(CY
  */
       if (unlikely(__pyx_v_w == 0)) {
         PyErr_SetString(PyExc_ZeroDivisionError, "integer division or modulo by zero");
-        __PYX_ERR(0, 26, __pyx_L1_error)
+        __PYX_ERR(0, 25, __pyx_L1_error)
       }
       else if (sizeof(Py_ssize_t) == sizeof(long) && (!(((int)-1) > 0)) && unlikely(__pyx_v_w == (int)-1)  && unlikely(UNARY_NEG_WOULD_OVERFLOW(__pyx_v_x))) {
         PyErr_SetString(PyExc_OverflowError, "value too large to perform division");
-        __PYX_ERR(0, 26, __pyx_L1_error)
+        __PYX_ERR(0, 25, __pyx_L1_error)
       }
       __pyx_v_y = (__pyx_v_y + __Pyx_div_Py_ssize_t(__pyx_v_x, __pyx_v_w));
 
-      /* "src/formats/sprites/_sprites_cy_func.pyx":27
+      /* "src/formats/sprites/_sprites_cy_func.pyx":26
  *         for _ in range(val):
  *             y += x // w
  *             x = x % w             # <<<<<<<<<<<<<<
  *             idx = data[offset]
- *             target_x = w - 1 - x0 - x if x_flip else x0 + x
+ *             # check if there is non-zero data byte. if there is at least one, there will be errors on paletting..
  */
       if (unlikely(__pyx_v_w == 0)) {
         PyErr_SetString(PyExc_ZeroDivisionError, "integer division or modulo by zero");
-        __PYX_ERR(0, 27, __pyx_L1_error)
+        __PYX_ERR(0, 26, __pyx_L1_error)
       }
       __pyx_v_x = __Pyx_mod_Py_ssize_t(__pyx_v_x, __pyx_v_w);
 
-      /* "src/formats/sprites/_sprites_cy_func.pyx":28
+      /* "src/formats/sprites/_sprites_cy_func.pyx":27
  *             y += x // w
  *             x = x % w
  *             idx = data[offset]             # <<<<<<<<<<<<<<
- *             target_x = w - 1 - x0 - x if x_flip else x0 + x
  *             # check if there is non-zero data byte. if there is at least one, there will be errors on paletting..
+ *             # assert idx > 0
  */
       __pyx_v_idx = (__pyx_v_data[__pyx_v_offset]);
 
-      /* "src/formats/sprites/_sprites_cy_func.pyx":29
- *             x = x % w
- *             idx = data[offset]
- *             target_x = w - 1 - x0 - x if x_flip else x0 + x             # <<<<<<<<<<<<<<
+      /* "src/formats/sprites/_sprites_cy_func.pyx":30
  *             # check if there is non-zero data byte. if there is at least one, there will be errors on paletting..
  *             # assert idx > 0
- */
-      if ((__pyx_v_x_flip != 0)) {
-        __pyx_t_10 = (((__pyx_v_w - 1) - __pyx_v_x0) - __pyx_v_x);
-      } else {
-        __pyx_t_10 = (__pyx_v_x0 + __pyx_v_x);
-      }
-      __pyx_v_target_x = __pyx_t_10;
-
-      /* "src/formats/sprites/_sprites_cy_func.pyx":32
- *             # check if there is non-zero data byte. if there is at least one, there will be errors on paletting..
- *             # assert idx > 0
- *             output[y0 + y, target_x] = idx             # <<<<<<<<<<<<<<
+ *             output[y, x] = idx             # <<<<<<<<<<<<<<
  *             offset += 1
  *             x += 1
  */
-      __pyx_t_5 = __Pyx_PyInt_From_char(__pyx_v_idx); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 32, __pyx_L1_error)
+      __pyx_t_5 = __Pyx_PyInt_From_char(__pyx_v_idx); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 30, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_5);
-      __pyx_t_4 = PyInt_FromSsize_t((__pyx_v_y0 + __pyx_v_y)); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 32, __pyx_L1_error)
+      __pyx_t_4 = PyInt_FromSsize_t(__pyx_v_y); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 30, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_4);
-      __pyx_t_3 = PyInt_FromSsize_t(__pyx_v_target_x); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 32, __pyx_L1_error)
+      __pyx_t_3 = PyInt_FromSsize_t(__pyx_v_x); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 30, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_3);
-      __pyx_t_2 = PyTuple_New(2); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 32, __pyx_L1_error)
+      __pyx_t_2 = PyTuple_New(2); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 30, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_2);
       __Pyx_GIVEREF(__pyx_t_4);
       PyTuple_SET_ITEM(__pyx_t_2, 0, __pyx_t_4);
@@ -1676,21 +1616,21 @@ static PyObject *__pyx_pf_3src_7formats_7sprites_16_sprites_cy_func_to_colors(CY
       PyTuple_SET_ITEM(__pyx_t_2, 1, __pyx_t_3);
       __pyx_t_4 = 0;
       __pyx_t_3 = 0;
-      if (unlikely(PyObject_SetItem(__pyx_v_output, __pyx_t_2, __pyx_t_5) < 0)) __PYX_ERR(0, 32, __pyx_L1_error)
+      if (unlikely(PyObject_SetItem(__pyx_v_output, __pyx_t_2, __pyx_t_5) < 0)) __PYX_ERR(0, 30, __pyx_L1_error)
       __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
       __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
 
-      /* "src/formats/sprites/_sprites_cy_func.pyx":33
+      /* "src/formats/sprites/_sprites_cy_func.pyx":31
  *             # assert idx > 0
- *             output[y0 + y, target_x] = idx
+ *             output[y, x] = idx
  *             offset += 1             # <<<<<<<<<<<<<<
  *             x += 1
  *     return output
  */
       __pyx_v_offset = (__pyx_v_offset + 1);
 
-      /* "src/formats/sprites/_sprites_cy_func.pyx":34
- *             output[y0 + y, target_x] = idx
+      /* "src/formats/sprites/_sprites_cy_func.pyx":32
+ *             output[y, x] = idx
  *             offset += 1
  *             x += 1             # <<<<<<<<<<<<<<
  *     return output
@@ -1700,7 +1640,7 @@ static PyObject *__pyx_pf_3src_7formats_7sprites_16_sprites_cy_func_to_colors(CY
     __pyx_L3_continue:;
   }
 
-  /* "src/formats/sprites/_sprites_cy_func.pyx":35
+  /* "src/formats/sprites/_sprites_cy_func.pyx":33
  *             offset += 1
  *             x += 1
  *     return output             # <<<<<<<<<<<<<<
@@ -1713,7 +1653,7 @@ static PyObject *__pyx_pf_3src_7formats_7sprites_16_sprites_cy_func_to_colors(CY
   /* "src/formats/sprites/_sprites_cy_func.pyx":6
  * import numpy as np
  * 
- * def to_colors(char* data, int data_size, int w, int h, Py_ssize_t x0, Py_ssize_t  y0, char x_flip):             # <<<<<<<<<<<<<<
+ * def ROM256_to_color_indexes(char* data, int data_size, int w, int h):             # <<<<<<<<<<<<<<
  *     output = np.zeros((h, w), dtype=np.uint8)
  *     cdef Py_ssize_t offset = 0
  */
@@ -1725,7 +1665,7 @@ static PyObject *__pyx_pf_3src_7formats_7sprites_16_sprites_cy_func_to_colors(CY
   __Pyx_XDECREF(__pyx_t_3);
   __Pyx_XDECREF(__pyx_t_4);
   __Pyx_XDECREF(__pyx_t_5);
-  __Pyx_AddTraceback("src.formats.sprites._sprites_cy_func.to_colors", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __Pyx_AddTraceback("src.formats.sprites._sprites_cy_func.ROM256_to_color_indexes", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __pyx_r = NULL;
   __pyx_L0:;
   __Pyx_XDECREF(__pyx_v_output);
@@ -1781,6 +1721,7 @@ static struct PyModuleDef __pyx_moduledef = {
 
 static __Pyx_StringTabEntry __pyx_string_tab[] = {
   {&__pyx_n_s_, __pyx_k_, sizeof(__pyx_k_), 0, 0, 1, 1},
+  {&__pyx_n_s_ROM256_to_color_indexes, __pyx_k_ROM256_to_color_indexes, sizeof(__pyx_k_ROM256_to_color_indexes), 0, 0, 1, 1},
   {&__pyx_n_s_byte, __pyx_k_byte, sizeof(__pyx_k_byte), 0, 0, 1, 1},
   {&__pyx_n_s_cline_in_traceback, __pyx_k_cline_in_traceback, sizeof(__pyx_k_cline_in_traceback), 0, 0, 1, 1},
   {&__pyx_n_s_code, __pyx_k_code, sizeof(__pyx_k_code), 0, 0, 1, 1},
@@ -1799,22 +1740,17 @@ static __Pyx_StringTabEntry __pyx_string_tab[] = {
   {&__pyx_n_s_range, __pyx_k_range, sizeof(__pyx_k_range), 0, 0, 1, 1},
   {&__pyx_kp_s_src_formats_sprites__sprites_cy, __pyx_k_src_formats_sprites__sprites_cy, sizeof(__pyx_k_src_formats_sprites__sprites_cy), 0, 0, 1, 0},
   {&__pyx_n_s_src_formats_sprites__sprites_cy_2, __pyx_k_src_formats_sprites__sprites_cy_2, sizeof(__pyx_k_src_formats_sprites__sprites_cy_2), 0, 0, 1, 1},
-  {&__pyx_n_s_target_x, __pyx_k_target_x, sizeof(__pyx_k_target_x), 0, 0, 1, 1},
   {&__pyx_n_s_test, __pyx_k_test, sizeof(__pyx_k_test), 0, 0, 1, 1},
-  {&__pyx_n_s_to_colors, __pyx_k_to_colors, sizeof(__pyx_k_to_colors), 0, 0, 1, 1},
   {&__pyx_n_s_uint8, __pyx_k_uint8, sizeof(__pyx_k_uint8), 0, 0, 1, 1},
   {&__pyx_n_s_val, __pyx_k_val, sizeof(__pyx_k_val), 0, 0, 1, 1},
   {&__pyx_n_s_w, __pyx_k_w, sizeof(__pyx_k_w), 0, 0, 1, 1},
   {&__pyx_n_s_x, __pyx_k_x, sizeof(__pyx_k_x), 0, 0, 1, 1},
-  {&__pyx_n_s_x0, __pyx_k_x0, sizeof(__pyx_k_x0), 0, 0, 1, 1},
-  {&__pyx_n_s_x_flip, __pyx_k_x_flip, sizeof(__pyx_k_x_flip), 0, 0, 1, 1},
   {&__pyx_n_s_y, __pyx_k_y, sizeof(__pyx_k_y), 0, 0, 1, 1},
-  {&__pyx_n_s_y0, __pyx_k_y0, sizeof(__pyx_k_y0), 0, 0, 1, 1},
   {&__pyx_n_s_zeros, __pyx_k_zeros, sizeof(__pyx_k_zeros), 0, 0, 1, 1},
   {0, 0, 0, 0, 0, 0, 0}
 };
 static CYTHON_SMALL_CODE int __Pyx_InitCachedBuiltins(void) {
-  __pyx_builtin_range = __Pyx_GetBuiltinName(__pyx_n_s_range); if (!__pyx_builtin_range) __PYX_ERR(0, 25, __pyx_L1_error)
+  __pyx_builtin_range = __Pyx_GetBuiltinName(__pyx_n_s_range); if (!__pyx_builtin_range) __PYX_ERR(0, 24, __pyx_L1_error)
   return 0;
   __pyx_L1_error:;
   return -1;
@@ -1827,14 +1763,14 @@ static CYTHON_SMALL_CODE int __Pyx_InitCachedConstants(void) {
   /* "src/formats/sprites/_sprites_cy_func.pyx":6
  * import numpy as np
  * 
- * def to_colors(char* data, int data_size, int w, int h, Py_ssize_t x0, Py_ssize_t  y0, char x_flip):             # <<<<<<<<<<<<<<
+ * def ROM256_to_color_indexes(char* data, int data_size, int w, int h):             # <<<<<<<<<<<<<<
  *     output = np.zeros((h, w), dtype=np.uint8)
  *     cdef Py_ssize_t offset = 0
  */
-  __pyx_tuple__2 = PyTuple_Pack(17, __pyx_n_s_data, __pyx_n_s_data_size, __pyx_n_s_w, __pyx_n_s_h, __pyx_n_s_x0, __pyx_n_s_y0, __pyx_n_s_x_flip, __pyx_n_s_output, __pyx_n_s_offset, __pyx_n_s_x, __pyx_n_s_y, __pyx_n_s_target_x, __pyx_n_s_byte, __pyx_n_s_val, __pyx_n_s_code, __pyx_n_s_, __pyx_n_s_idx); if (unlikely(!__pyx_tuple__2)) __PYX_ERR(0, 6, __pyx_L1_error)
+  __pyx_tuple__2 = PyTuple_Pack(13, __pyx_n_s_data, __pyx_n_s_data_size, __pyx_n_s_w, __pyx_n_s_h, __pyx_n_s_output, __pyx_n_s_offset, __pyx_n_s_x, __pyx_n_s_y, __pyx_n_s_byte, __pyx_n_s_val, __pyx_n_s_code, __pyx_n_s_, __pyx_n_s_idx); if (unlikely(!__pyx_tuple__2)) __PYX_ERR(0, 6, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_tuple__2);
   __Pyx_GIVEREF(__pyx_tuple__2);
-  __pyx_codeobj__3 = (PyObject*)__Pyx_PyCode_New(7, 0, 17, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__2, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_src_formats_sprites__sprites_cy, __pyx_n_s_to_colors, 6, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__3)) __PYX_ERR(0, 6, __pyx_L1_error)
+  __pyx_codeobj__3 = (PyObject*)__Pyx_PyCode_New(4, 0, 13, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__2, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_src_formats_sprites__sprites_cy, __pyx_n_s_ROM256_to_color_indexes, 6, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__3)) __PYX_ERR(0, 6, __pyx_L1_error)
   __Pyx_RefNannyFinishContext();
   return 0;
   __pyx_L1_error:;
@@ -2118,7 +2054,7 @@ if (!__Pyx_RefNanny) {
  * 
  * import numpy as np             # <<<<<<<<<<<<<<
  * 
- * def to_colors(char* data, int data_size, int w, int h, Py_ssize_t x0, Py_ssize_t  y0, char x_flip):
+ * def ROM256_to_color_indexes(char* data, int data_size, int w, int h):
  */
   __pyx_t_1 = __Pyx_Import(__pyx_n_s_numpy, 0, 0); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 4, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
@@ -2128,13 +2064,13 @@ if (!__Pyx_RefNanny) {
   /* "src/formats/sprites/_sprites_cy_func.pyx":6
  * import numpy as np
  * 
- * def to_colors(char* data, int data_size, int w, int h, Py_ssize_t x0, Py_ssize_t  y0, char x_flip):             # <<<<<<<<<<<<<<
+ * def ROM256_to_color_indexes(char* data, int data_size, int w, int h):             # <<<<<<<<<<<<<<
  *     output = np.zeros((h, w), dtype=np.uint8)
  *     cdef Py_ssize_t offset = 0
  */
-  __pyx_t_1 = PyCFunction_NewEx(&__pyx_mdef_3src_7formats_7sprites_16_sprites_cy_func_1to_colors, NULL, __pyx_n_s_src_formats_sprites__sprites_cy_2); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 6, __pyx_L1_error)
+  __pyx_t_1 = PyCFunction_NewEx(&__pyx_mdef_3src_7formats_7sprites_16_sprites_cy_func_1ROM256_to_color_indexes, NULL, __pyx_n_s_src_formats_sprites__sprites_cy_2); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 6, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
-  if (PyDict_SetItem(__pyx_d, __pyx_n_s_to_colors, __pyx_t_1) < 0) __PYX_ERR(0, 6, __pyx_L1_error)
+  if (PyDict_SetItem(__pyx_d, __pyx_n_s_ROM256_to_color_indexes, __pyx_t_1) < 0) __PYX_ERR(0, 6, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
 
   /* "src/formats/sprites/_sprites_cy_func.pyx":1
@@ -2989,202 +2925,6 @@ raise_neg_overflow:
     PyErr_SetString(PyExc_OverflowError,
         "can't convert negative value to int");
     return (int) -1;
-}
-
-/* CIntFromPy */
-static CYTHON_INLINE char __Pyx_PyInt_As_char(PyObject *x) {
-#ifdef __Pyx_HAS_GCC_DIAGNOSTIC
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wconversion"
-#endif
-    const char neg_one = (char) -1, const_zero = (char) 0;
-#ifdef __Pyx_HAS_GCC_DIAGNOSTIC
-#pragma GCC diagnostic pop
-#endif
-    const int is_unsigned = neg_one > const_zero;
-#if PY_MAJOR_VERSION < 3
-    if (likely(PyInt_Check(x))) {
-        if (sizeof(char) < sizeof(long)) {
-            __PYX_VERIFY_RETURN_INT(char, long, PyInt_AS_LONG(x))
-        } else {
-            long val = PyInt_AS_LONG(x);
-            if (is_unsigned && unlikely(val < 0)) {
-                goto raise_neg_overflow;
-            }
-            return (char) val;
-        }
-    } else
-#endif
-    if (likely(PyLong_Check(x))) {
-        if (is_unsigned) {
-#if CYTHON_USE_PYLONG_INTERNALS
-            const digit* digits = ((PyLongObject*)x)->ob_digit;
-            switch (Py_SIZE(x)) {
-                case  0: return (char) 0;
-                case  1: __PYX_VERIFY_RETURN_INT(char, digit, digits[0])
-                case 2:
-                    if (8 * sizeof(char) > 1 * PyLong_SHIFT) {
-                        if (8 * sizeof(unsigned long) > 2 * PyLong_SHIFT) {
-                            __PYX_VERIFY_RETURN_INT(char, unsigned long, (((((unsigned long)digits[1]) << PyLong_SHIFT) | (unsigned long)digits[0])))
-                        } else if (8 * sizeof(char) >= 2 * PyLong_SHIFT) {
-                            return (char) (((((char)digits[1]) << PyLong_SHIFT) | (char)digits[0]));
-                        }
-                    }
-                    break;
-                case 3:
-                    if (8 * sizeof(char) > 2 * PyLong_SHIFT) {
-                        if (8 * sizeof(unsigned long) > 3 * PyLong_SHIFT) {
-                            __PYX_VERIFY_RETURN_INT(char, unsigned long, (((((((unsigned long)digits[2]) << PyLong_SHIFT) | (unsigned long)digits[1]) << PyLong_SHIFT) | (unsigned long)digits[0])))
-                        } else if (8 * sizeof(char) >= 3 * PyLong_SHIFT) {
-                            return (char) (((((((char)digits[2]) << PyLong_SHIFT) | (char)digits[1]) << PyLong_SHIFT) | (char)digits[0]));
-                        }
-                    }
-                    break;
-                case 4:
-                    if (8 * sizeof(char) > 3 * PyLong_SHIFT) {
-                        if (8 * sizeof(unsigned long) > 4 * PyLong_SHIFT) {
-                            __PYX_VERIFY_RETURN_INT(char, unsigned long, (((((((((unsigned long)digits[3]) << PyLong_SHIFT) | (unsigned long)digits[2]) << PyLong_SHIFT) | (unsigned long)digits[1]) << PyLong_SHIFT) | (unsigned long)digits[0])))
-                        } else if (8 * sizeof(char) >= 4 * PyLong_SHIFT) {
-                            return (char) (((((((((char)digits[3]) << PyLong_SHIFT) | (char)digits[2]) << PyLong_SHIFT) | (char)digits[1]) << PyLong_SHIFT) | (char)digits[0]));
-                        }
-                    }
-                    break;
-            }
-#endif
-#if CYTHON_COMPILING_IN_CPYTHON
-            if (unlikely(Py_SIZE(x) < 0)) {
-                goto raise_neg_overflow;
-            }
-#else
-            {
-                int result = PyObject_RichCompareBool(x, Py_False, Py_LT);
-                if (unlikely(result < 0))
-                    return (char) -1;
-                if (unlikely(result == 1))
-                    goto raise_neg_overflow;
-            }
-#endif
-            if (sizeof(char) <= sizeof(unsigned long)) {
-                __PYX_VERIFY_RETURN_INT_EXC(char, unsigned long, PyLong_AsUnsignedLong(x))
-#ifdef HAVE_LONG_LONG
-            } else if (sizeof(char) <= sizeof(unsigned PY_LONG_LONG)) {
-                __PYX_VERIFY_RETURN_INT_EXC(char, unsigned PY_LONG_LONG, PyLong_AsUnsignedLongLong(x))
-#endif
-            }
-        } else {
-#if CYTHON_USE_PYLONG_INTERNALS
-            const digit* digits = ((PyLongObject*)x)->ob_digit;
-            switch (Py_SIZE(x)) {
-                case  0: return (char) 0;
-                case -1: __PYX_VERIFY_RETURN_INT(char, sdigit, (sdigit) (-(sdigit)digits[0]))
-                case  1: __PYX_VERIFY_RETURN_INT(char,  digit, +digits[0])
-                case -2:
-                    if (8 * sizeof(char) - 1 > 1 * PyLong_SHIFT) {
-                        if (8 * sizeof(unsigned long) > 2 * PyLong_SHIFT) {
-                            __PYX_VERIFY_RETURN_INT(char, long, -(long) (((((unsigned long)digits[1]) << PyLong_SHIFT) | (unsigned long)digits[0])))
-                        } else if (8 * sizeof(char) - 1 > 2 * PyLong_SHIFT) {
-                            return (char) (((char)-1)*(((((char)digits[1]) << PyLong_SHIFT) | (char)digits[0])));
-                        }
-                    }
-                    break;
-                case 2:
-                    if (8 * sizeof(char) > 1 * PyLong_SHIFT) {
-                        if (8 * sizeof(unsigned long) > 2 * PyLong_SHIFT) {
-                            __PYX_VERIFY_RETURN_INT(char, unsigned long, (((((unsigned long)digits[1]) << PyLong_SHIFT) | (unsigned long)digits[0])))
-                        } else if (8 * sizeof(char) - 1 > 2 * PyLong_SHIFT) {
-                            return (char) ((((((char)digits[1]) << PyLong_SHIFT) | (char)digits[0])));
-                        }
-                    }
-                    break;
-                case -3:
-                    if (8 * sizeof(char) - 1 > 2 * PyLong_SHIFT) {
-                        if (8 * sizeof(unsigned long) > 3 * PyLong_SHIFT) {
-                            __PYX_VERIFY_RETURN_INT(char, long, -(long) (((((((unsigned long)digits[2]) << PyLong_SHIFT) | (unsigned long)digits[1]) << PyLong_SHIFT) | (unsigned long)digits[0])))
-                        } else if (8 * sizeof(char) - 1 > 3 * PyLong_SHIFT) {
-                            return (char) (((char)-1)*(((((((char)digits[2]) << PyLong_SHIFT) | (char)digits[1]) << PyLong_SHIFT) | (char)digits[0])));
-                        }
-                    }
-                    break;
-                case 3:
-                    if (8 * sizeof(char) > 2 * PyLong_SHIFT) {
-                        if (8 * sizeof(unsigned long) > 3 * PyLong_SHIFT) {
-                            __PYX_VERIFY_RETURN_INT(char, unsigned long, (((((((unsigned long)digits[2]) << PyLong_SHIFT) | (unsigned long)digits[1]) << PyLong_SHIFT) | (unsigned long)digits[0])))
-                        } else if (8 * sizeof(char) - 1 > 3 * PyLong_SHIFT) {
-                            return (char) ((((((((char)digits[2]) << PyLong_SHIFT) | (char)digits[1]) << PyLong_SHIFT) | (char)digits[0])));
-                        }
-                    }
-                    break;
-                case -4:
-                    if (8 * sizeof(char) - 1 > 3 * PyLong_SHIFT) {
-                        if (8 * sizeof(unsigned long) > 4 * PyLong_SHIFT) {
-                            __PYX_VERIFY_RETURN_INT(char, long, -(long) (((((((((unsigned long)digits[3]) << PyLong_SHIFT) | (unsigned long)digits[2]) << PyLong_SHIFT) | (unsigned long)digits[1]) << PyLong_SHIFT) | (unsigned long)digits[0])))
-                        } else if (8 * sizeof(char) - 1 > 4 * PyLong_SHIFT) {
-                            return (char) (((char)-1)*(((((((((char)digits[3]) << PyLong_SHIFT) | (char)digits[2]) << PyLong_SHIFT) | (char)digits[1]) << PyLong_SHIFT) | (char)digits[0])));
-                        }
-                    }
-                    break;
-                case 4:
-                    if (8 * sizeof(char) > 3 * PyLong_SHIFT) {
-                        if (8 * sizeof(unsigned long) > 4 * PyLong_SHIFT) {
-                            __PYX_VERIFY_RETURN_INT(char, unsigned long, (((((((((unsigned long)digits[3]) << PyLong_SHIFT) | (unsigned long)digits[2]) << PyLong_SHIFT) | (unsigned long)digits[1]) << PyLong_SHIFT) | (unsigned long)digits[0])))
-                        } else if (8 * sizeof(char) - 1 > 4 * PyLong_SHIFT) {
-                            return (char) ((((((((((char)digits[3]) << PyLong_SHIFT) | (char)digits[2]) << PyLong_SHIFT) | (char)digits[1]) << PyLong_SHIFT) | (char)digits[0])));
-                        }
-                    }
-                    break;
-            }
-#endif
-            if (sizeof(char) <= sizeof(long)) {
-                __PYX_VERIFY_RETURN_INT_EXC(char, long, PyLong_AsLong(x))
-#ifdef HAVE_LONG_LONG
-            } else if (sizeof(char) <= sizeof(PY_LONG_LONG)) {
-                __PYX_VERIFY_RETURN_INT_EXC(char, PY_LONG_LONG, PyLong_AsLongLong(x))
-#endif
-            }
-        }
-        {
-#if CYTHON_COMPILING_IN_PYPY && !defined(_PyLong_AsByteArray)
-            PyErr_SetString(PyExc_RuntimeError,
-                            "_PyLong_AsByteArray() not available in PyPy, cannot convert large numbers");
-#else
-            char val;
-            PyObject *v = __Pyx_PyNumber_IntOrLong(x);
- #if PY_MAJOR_VERSION < 3
-            if (likely(v) && !PyLong_Check(v)) {
-                PyObject *tmp = v;
-                v = PyNumber_Long(tmp);
-                Py_DECREF(tmp);
-            }
- #endif
-            if (likely(v)) {
-                int one = 1; int is_little = (int)*(unsigned char *)&one;
-                unsigned char *bytes = (unsigned char *)&val;
-                int ret = _PyLong_AsByteArray((PyLongObject *)v,
-                                              bytes, sizeof(val),
-                                              is_little, !is_unsigned);
-                Py_DECREF(v);
-                if (likely(!ret))
-                    return val;
-            }
-#endif
-            return (char) -1;
-        }
-    } else {
-        char val;
-        PyObject *tmp = __Pyx_PyNumber_IntOrLong(x);
-        if (!tmp) return (char) -1;
-        val = __Pyx_PyInt_As_char(tmp);
-        Py_DECREF(tmp);
-        return val;
-    }
-raise_overflow:
-    PyErr_SetString(PyExc_OverflowError,
-        "value too large to convert to char");
-    return (char) -1;
-raise_neg_overflow:
-    PyErr_SetString(PyExc_OverflowError,
-        "can't convert negative value to char");
-    return (char) -1;
 }
 
 /* CIntToPy */

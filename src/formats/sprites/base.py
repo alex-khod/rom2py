@@ -7,7 +7,6 @@ from pyglet.image import ImageData
 
 TILE_SIZE = 32
 
-
 def texture_to_pil_image(texture):
     data = texture.get_image_data().get_data()
     w, h = texture.length, texture.height
@@ -15,29 +14,42 @@ def texture_to_pil_image(texture):
     return image
 
 
-class A256Frame:
+class ROM256Frame:
     _x_flip = 0
     _cache = None
 
-    def __init__(self, parent, sprite, displaysize=None, cache=None):
+    def __init__(self, parent, sprite, _canvas_size=None, cache=None):
         self._parent = parent
         self._sprite = sprite
         self._cache = cache
+        self._canvas_size = _canvas_size
 
         self.width = self._sprite.width
         self.height = self._sprite.height
-        if displaysize:
-            w, h = displaysize
-            self.width = max(self.width, w)
-            self.height = max(self.height, h)
-        self.x0 = (self.width - self._sprite.width) // 2
-        self.y0 = (self.height - self._sprite.height) // 2
 
     def set_x_flip(self, x_flip):
         self._x_flip = x_flip
         return self
 
-    def to_colors(self):
+    @staticmethod
+    def do_x_flip(output):
+        output[:, :] = output[:, ::-1]
+        return output
+
+    def blit_to_canvas(self, output):
+        cw, ch = self._canvas_size
+        shape = output.shape
+        h, w = shape[:3]
+        cw = max(cw, w)
+        ch = max(ch, h)
+        canvas_shape = (cw, ch) + shape[3:]
+        canvas = np.zeros(canvas_shape, dtype="uint8")
+        x0 = (cw - w) // 2
+        y0 = (ch - h) // 2
+        canvas[y0:y0 + h, x0:x0 + w] = output
+        return canvas
+
+    def to_color_indexes(self):
         sprite = self._sprite
         data = sprite.data
         data_size = sprite.data_size
@@ -45,7 +57,6 @@ class A256Frame:
         w, h = self.width, self.height
         output = np.zeros((h, w), dtype='uint8')
 
-        x0, y0, = self.x0, self.y0
         x, y = 0, 0
         offset = 0
         while offset < data_size:
@@ -64,36 +75,37 @@ class A256Frame:
                 y += x // w
                 x = x % w
                 idx = data[offset]
-                target_x = w - 1 - x0 - x if self._x_flip else x0 + x
                 # check if there is non-zero data byte. if there is at least one, there will be errors on paletting..
                 # assert idx > 0
-                output[y0 + y][target_x] = idx
+                output[y][x] = idx
                 offset += 1
                 x += 1
+
+        if self._x_flip:
+            output = self.do_x_flip(output)
+        if self._canvas_size:
+            return self.blit_to_canvas(output)
         return output
 
     def to_rgba(self, palette=None):
         palette = palette or self._parent.palette
         palette = np.array(palette.colors, dtype="uint8")
-        idxs = self.to_colors()
-        # x flip
-        # idxs.setflags(write=1)
-        # idxs[:] = idxs[::-1]
+        idxs = self.to_color_indexes()
         return palette[idxs]
 
     def to_rgba_image_data(self, palette=None):
         rgba = self.to_rgba(palette)
         h, w, _ = rgba.shape
-        # x flip
-        # rgba[:,:,:] = rgba[::-1,:,:]
         data = rgba.tobytes()
         data = ImageData(w, h, "RGBA", data)
         return data
 
     def to_r_image_data(self):
-        idxs = self.to_colors()
-        h, w = idxs.shape
-        data = idxs.tobytes()
+        idxs = self.to_color_indexes()
+        # h, w = idxs.shape
+        h, w = len(idxs), len(idxs[0])
+        # data = idxs.tobytes()
+        data = b''.join([bytes(row) for row in idxs])
         data = ImageData(w, h, "R", data)
         return data
 
@@ -101,24 +113,23 @@ class A256Frame:
         return PILImage.fromarray(self.to_rgba(palette))
 
 
-class A256(RageOfMages1256):
+class ROM256(RageOfMages1256):
     _palette = None
-    _displaysize = None
+    _canvas_size = None
     _cache = None
-    _record_class = A256Frame
+    _frame_class = ROM256Frame
 
     def __getitem__(self, keys):
         if not self._cache:
             self._cache = [None] * self.count
         if type(keys) is slice:
-            return [self._record_class(self, self.sprite_records[idx], self._displaysize, self._cache[idx]) for idx in
+            return [self._frame_class(self, self.sprite_records[idx], self._canvas_size, self._cache[idx]) for idx in
                     range(*keys.indices(self.count))]
         idx = keys
-        return self._record_class(self, self.sprite_records[idx], self._displaysize, self._cache[idx])
+        return self._frame_class(self, self.sprite_records[idx], self._canvas_size, self._cache[idx])
 
-    def resize(self, displaysize):
-        # sets the display size for A256SpriteRecord output
-        self._displaysize = displaysize
+    def set_canvas_size(self, canvas_size):
+        self._canvas_size = canvas_size
         return self
 
     @property
@@ -137,7 +148,7 @@ class A256(RageOfMages1256):
     def load_inner_palette(self):
         return Palette.data_to_palette(self.inner_palette)
 
-    def to_tiles(self, tile_width: int, tile_height: int, offset: int = 0) -> np.array:
+    def to_tiles(self, tile_width: int, tile_height: int, offset: int = 0):
         """
             Interpret frames at :offset as parts of tiled picture with dimensions :tile_width x :tile_height.
             :return RGBA array
@@ -152,16 +163,18 @@ class A256(RageOfMages1256):
                 output[j * 32:(j + 1) * 32, i * 32:(i + 1) * 32] = rgba
         return output
 
+    def __repr__(self):
+        return f"{self.count}-frame {self.__class__}"
 
-class A16Frame(A256Frame):
 
-    def to_rgba(self, palette=None):
-        palette = palette or self._parent.palette
+class ROM16AFrame(ROM256Frame):
+
+    def to_color_indexes(self):
         sprite = self._sprite
         data = sprite.data
         data_size = sprite.data_size
         w, h = self.width, self.height
-        colors = np.zeros((h, w, 4), dtype='uint8')
+        colors = np.zeros((h, w, 2), dtype='uint8')
         x, y = 0, 0
         offset = 0
         while offset < data_size:
@@ -177,18 +190,38 @@ class A16Frame(A256Frame):
 
             for _ in range(val):
                 y += x // w
-                x = x % h
+                x = x % w
                 raw = data[offset] + (data[offset + 1] << 8)
                 idx = (raw >> 1) & 0xFF
                 alpha = ((raw >> 9) & 0b1111) * 0x11
-                colors[y][x] = palette.colors[idx][:3] + (alpha,)
-                x += 1
+                colors[y][x] = (idx, alpha)
                 offset += 2
+                x += 1
         return colors
 
+    def to_rgba(self, palette=None):
+        palette = palette or self._parent.palette
+        palette = np.array(palette.colors, dtype="uint8")
+        # transform to  RGB
+        palette = palette[:, :3]
+        idxs_alpha = self.to_color_indexes()
+        idxs = idxs_alpha[:, :, 0]
+        alpha = idxs_alpha[:, :, 1]
+        rgb = palette[idxs]
+        # append alpha channel to colors
+        rgba = np.dstack((rgb, alpha))
+        return rgba
 
-class A16(A256):
-    _record_class = A16Frame
+    def to_rg_image_data(self):
+        idxs_alpha = self.to_color_indexes()
+        h, w, _ = idxs_alpha.shape
+        data = idxs_alpha.tobytes()
+        data = ImageData(w, h, "RG", data)
+        return data
+
+
+class ROM16A(ROM256):
+    _frame_class = ROM16AFrame
 
 
 class Palette:
@@ -247,6 +280,6 @@ class BmpHandler:
         return PILImage.open(bytesio)
 
 
-__all__ = ["A256", "A256Frame", "A16", "A16Frame", "Palette", "BmpHandler"]
+__all__ = ["ROM256", "ROM256Frame", "ROM16A", "ROM16AFrame", "Palette", "BmpHandler"]
 # ehh why not?
 __all__ += ["np", "PILImage"]

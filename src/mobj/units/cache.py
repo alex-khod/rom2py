@@ -1,5 +1,4 @@
 import struct
-import numpy as np
 from src.resources import Resources, get_resource_at_root
 
 def load_units():
@@ -11,7 +10,7 @@ def load_units():
         filename = u["filename"]
         u256 = Resources["graphics", "units", filename + '.256'].content
         try:
-            framedict[filename] = [img.to_colors() for img in u256]
+            framedict[filename] = [img.to_color_indexes() for img in u256]
         except AssertionError:
             print(f"{filename} is invalid: value 0 in color space.")
     return framedict

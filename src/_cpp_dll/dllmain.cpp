@@ -17,16 +17,20 @@ BOOL APIENTRY DllMain( HMODULE hModule,
     return TRUE;
 }
 
-extern "C" __declspec(dllexport) void to_colors(char* data, char* output, int data_size, int w, int h, int x0, int y0, bool x_flip)
+typedef unsigned char uint8_t;
+typedef unsigned int  uint32_t;
+
+
+extern "C" __declspec(dllexport) void ROM256_to_color_indexes(uint8_t * data, uint8_t * output, uint32_t data_size, uint32_t w, uint32_t h)
 {
-    int x = 0;
-    int y = 0;
-    int offset = 0;
+    uint32_t x = 0;
+    uint32_t y = 0;
+    uint32_t offset = 0;
     while (offset < data_size)
     {
-        int _byte = data[offset];
-        int val = _byte & 0x3f;
-        int code = _byte & 0xc0;
+        uint8_t _byte = data[offset];
+        uint8_t val = _byte & 0x3F;
+        uint8_t code = _byte & 0xC0;
         offset += 1;
 
         if (code > 0) {
@@ -36,10 +40,43 @@ extern "C" __declspec(dllexport) void to_colors(char* data, char* output, int da
 
         for (int i = 0; i < val; i++) {
             y += x / w;
-            x = x % w;
-            int target_x = x_flip ? w - 1 - x0 - x : x0 + x;
-            output[(y0 + y) * w + target_x] = data[offset];
+            x = x % w;            
+            uint32_t _xy = y * w + x;
+
+            output[_xy] = data[offset];
             offset += 1;
+            x += 1;
+        }
+    }
+}
+
+extern "C" __declspec(dllexport) void ROM16A_to_color_indexes(uint8_t * data, uint8_t * output, uint32_t data_size, uint32_t w, uint32_t h)
+{
+    uint32_t x = 0;
+    uint32_t y = 0;
+    uint32_t offset = 0;    
+    while (offset < data_size)
+    {        
+        uint8_t val = data[offset];
+        uint8_t code = data[offset+1];
+        offset += 2;
+
+        if (code > 0) {
+            (code == 0x40) ? y += val : x += val;
+            continue;
+        }
+
+        for (uint32_t i = 0; i < val; i++) {
+            y += x / w;
+            x = x % w;            
+            uint32_t _xy = y * w + x;
+                                          
+            uint32_t raw = data[offset] + (data[offset + 1] << 8);
+            uint8_t idx = (raw >> 1) & 0xFF;
+            uint8_t alpha = ((raw >> 9) & 0b1111) * 0x11;
+            output[_xy * 2] = idx;
+            output[_xy * 2 + 1] = alpha;
+            offset += 2;
             x += 1;
         }
     }

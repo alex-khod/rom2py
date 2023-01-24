@@ -1,10 +1,22 @@
 import os
 
+from src.formats import databin, alm2, sprites, registry, simple
 
-def init_mappings():
-    # lazy import to not create import loop for formats that access resources:
-    # formats -> resources -> content -> formats...
-    from src.formats import databin, alm2, sprites, registry, simple
+
+# using lazy import breaks sprite loader timetests as they fiddle with name_mapping.
+# either don't allow formats to have resource dependencies
+# or inject dependencies in resources / main
+# or load modules by string
+
+class Selector:
+    """
+        Return resource instance by guessing its type using name first, extension second.
+
+        :param resource_data: bytes or file path to pass to resource instance
+        :param resource_name: ex. "units.reg"
+        :param create_how: str 'from_bytes' or 'from_file'
+        :return: resource instance
+    """
 
     name_mapping = {
         "units.reg": registry.UnitRegistry,
@@ -21,31 +33,13 @@ def init_mappings():
         '.glsl': simple.ShaderSource,
         '.txt': simple.TextLines,
         '.alm': alm2.Alm2,
-        '.256': sprites.A256,
-        '.16a': sprites.A16,
+        '.256': sprites.ROM256,
+        '.16a': sprites.ROM16A,
         '.bmp': sprites.BmpHandler,
         '.pal': sprites.Palette,
     }
 
-    return name_mapping, ext_map
-
-
-class Selector:
-    """
-        Return resource instance by guessing its type using name first, extension second.
-
-        :param resource_data: bytes or file path to pass to resource instance
-        :param resource_name: ex. "units.reg"
-        :param create_how: str 'from_bytes' or 'from_file'
-        :return: resource instance
-    """
-
-    name_mapping = None
-    ext_map = None
-
     def __new__(cls, resource_data, resource_name, create_how='from_bytes'):
-        if not cls.name_mapping:
-            cls.name_mapping, cls.ext_map = init_mappings()
 
         ext = os.path.splitext(resource_name)[1]
 
