@@ -181,7 +181,7 @@ class A16Frame(A256Frame):
                 raw = data[offset] + (data[offset + 1] << 8)
                 idx = (raw >> 1) & 0xFF
                 alpha = ((raw >> 9) & 0b1111) * 0x11
-                colors[y][x] = palette[idx][:3] + (alpha,)
+                colors[y][x] = palette.colors[idx][:3] + (alpha,)
                 x += 1
                 offset += 2
         return colors
@@ -193,41 +193,41 @@ class A16(A256):
 
 class Palette:
     data_offset = 0x36
-    palette_colors = 256
-    palette_size = palette_colors * len("RGBA")
+    colors_size = 256
+    bytes_size = colors_size * len("RGBA")
 
     def __init__(self, colors):
         self.colors = colors
 
     def to_rgb_image_data(self):
         colors = sum([list(color[:3]) for color in self.colors], [])
-        data = ImageData(self.palette_colors, 1, "RGB", bytes(colors))
+        data = ImageData(self.colors_size, 1, "RGB", bytes(colors))
         return data
 
     @classmethod
     def data_to_palette(cls, buffer, format="RGB"):
-        colors = [[0, 0, 0, 0] for _ in range(cls.palette_colors)]
-        for idx in range(cls.palette_colors):
+        colors = [[0, 0, 0, 0] for _ in range(cls.colors_size)]
+        for idx in range(cls.colors_size):
             colors[idx] = tuple(buffer[idx * 4:idx * 4 + 3][::-1] + b'\xFF')
-        colors[0] = [0, 0, 0, 0]
+        colors[0] = (0, 0, 0, 0)
         palette = Palette(colors)
         return palette
 
     @classmethod
     def from_file(cls, fn: str):
         with open(fn, 'rb') as f:
-            buffer = f.read(cls.data_offset + cls.palette_size)
+            buffer = f.read(cls.data_offset + cls.bytes_size)
             data = cls.from_bytes(buffer)
             return cls.data_to_palette(buffer)
 
     @classmethod
     def from_bytes(cls, buffer):
-        data = buffer[cls.data_offset:cls.data_offset + cls.palette_size]
+        data = buffer[cls.data_offset:cls.data_offset + cls.bytes_size]
         return cls.data_to_palette(data)
 
     @classmethod
     def from_random(cls):
-        buffer = np.random.randint(0, 255, size=cls.data_offset + cls.palette_size, dtype="uint8").tobytes()
+        buffer = np.random.randint(0, 255, size=cls.data_offset + cls.bytes_size, dtype="uint8").tobytes()
         return cls.from_bytes(buffer)
 
     def to_pil_image(self):
