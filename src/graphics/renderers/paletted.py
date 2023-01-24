@@ -19,25 +19,8 @@ class PalettedSpriteRenderer:
         self.sprites = []
         self._first_image = None
 
-        self.mem_usage_total = 0
-        self.mem_usage_real = 0
-
-
-        # self.atlas = TextureAtlas(4096 * 10, 4096 * 10, texture_factory=texture_factory)
-        # self.mem_usage_total += self.atlas.texture.width * self.atlas.texture.height
-
-    def add_sprite(self, x, y, animation, palette):
-        # tile_heights = alm.heights_for_tile(tile_x, tile_y)
-        # avg_height = sum(tile_heights) / 4
-        avg_height = 0
-        # frame = animation.frames[0].image
-        # frame = animation[0]
-        sprite2 = PalettedSprite(animation, x, y, 0, batch=self.batch, palette_tex=palette)
-        # sprite2.image.width = 64
-        sprite2.color = (0, 0, 0)
-        sprite2.opacity = 127
-
-        img = sprite2._texture
+    def redraw_shadow(self, sprite: 'PalettedSprite'):
+        img = sprite._texture
         x1 = -img.anchor_x
         y1 = -img.anchor_y
         x2 = x1 + img.width
@@ -45,16 +28,25 @@ class PalettedSpriteRenderer:
 
         offset = img.height * 0.3
         offset2 = -offset * (1 - 0.3)
-        vertices = (x1+offset, y1, x2+offset, y1, x2, y2, x1, y2)
-        sprite2._vertex_list.position[:] = vertices
+        vertices = (x1 + offset, y1, x2 + offset, y1, x2, y2, x1, y2)
 
+        shadow = sprite.shadow
+        shadow._set_texture(img)
+        shadow.x = sprite.x
+        shadow.y = sprite.y
+        shadow._vertex_list.position[:] = vertices
+
+    def add_sprite(self, x, y, animation, palette):
+        shadow = PalettedSprite(animation, x, y, 0, batch=self.batch, palette_tex=palette)
+        shadow.color = (0, 0, 0)
+        shadow.opacity = 127
         sprite = PalettedSprite(animation, x, y, 0, batch=self.batch, palette_tex=palette)
-        sprite.shadow = sprite2
+        sprite.shadow = shadow
+        self.redraw_shadow(sprite)
         self.sprites.append(sprite)
         return sprite
 
     def draw(self):
-        glClearColor(255, 255, 255, 255)
         glActiveTexture(GL_TEXTURE1)
         glBindTexture(self.graphics.palette_atlas.texture.target, self.graphics.palette_atlas.texture.id)
         self.batch.draw()
@@ -65,6 +57,7 @@ class PalettedSpriteRenderer:
 
 class PalettedSprite(pyglet.sprite.Sprite):
     _palette_tex = None
+    shadow = None
 
     def __init__(self, *args, **kwargs):
         self._palette_tex = kwargs.pop("palette_tex")
