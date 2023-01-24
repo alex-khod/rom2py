@@ -84,6 +84,11 @@ class Objects:
                 image = animation
                 image = animation.frames[0].image
                 sprite = self.renderer.add_sprite(*xy, animation=image, palette=palette)
+                sprite.z = sprite.y / (alm.height * 32) * 256
+                # sprite.z = 1 - sprite.y / (alm.height * 32)
+
+                # sprite.z = 256 - tile_y * 4
+                # sprite.z = tile_y * 4
                 sprite.animation = animation
                 sprite._frame_id = 0
 
