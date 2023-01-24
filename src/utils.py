@@ -1,5 +1,9 @@
 import os
 
+from pyglet.math import Vec2
+
+Vec2.__hash__ = lambda x: hash((x.x, x.y))
+
 
 def _bisect_left(array, value):
     prev = array[0]
@@ -157,3 +161,23 @@ def get_intersection(box1: Box, box2: Box):
     right = min(box1.right, box2.right)
     top = min(box1.top, box2.top)
     return left, bottom, right, top
+
+
+import pickle
+
+
+def file_cache(cachefile):
+    def decorator(fn):
+        def wrapped(*args, **kwargs):
+            if os.path.exists(cachefile):
+                with open(cachefile, 'rb') as cachehandle:
+                    return pickle.load(cachehandle)
+            res = fn(*args, **kwargs)
+
+            with open(cachefile, 'wb') as cachehandle:
+                pickle.dump(res, cachehandle)
+            return res
+
+        return wrapped
+
+    return decorator
