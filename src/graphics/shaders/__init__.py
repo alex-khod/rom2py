@@ -13,6 +13,9 @@ def get_terrain_shader():
         geometry = Shader(geometry_source, "geometry")
         fragment = Shader(fragment_source, "fragment")
         program = ShaderProgram(vertex, geometry, fragment)
+
+        program.uniforms["tilemap_texture"].set(0)
+        program.uniforms["lighting_texture"].set(1)
         self.shader = program
 
     return self.shader
@@ -25,6 +28,10 @@ def get_sprite_shader():
         vertex = Shader(vertex_source, "vertex")
         fragment = Shader(fragment_source, "fragment")
         program = ShaderProgram(vertex, fragment)
+
+        program.uniforms["sprite_texture"].set(0)
+        program.uniforms["palette_texture"].set(1)
+
         self.shader = program
 
     return self.shader

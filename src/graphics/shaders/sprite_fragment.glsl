@@ -13,9 +13,8 @@ const float MODE_RG = 1.0;
 
 //uniform vec3 palette[256];
 uniform float mode;
-layout(binding=0) uniform sampler2D sprite_texture;
-//layout(binding=1) uniform sampler1DArray palette_texture;
-layout(binding=1) uniform sampler2D palette_texture;
+uniform sampler2D sprite_texture;
+uniform sampler2D palette_texture;
 
 out vec4 frag_color;
 
