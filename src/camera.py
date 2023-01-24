@@ -55,8 +55,8 @@ class Camera:
 
         w, h = self._window.size
         zoom = self._zoom
-        self.translate_x = (x + w / 2) * zoom - w / 2
-        self.translate_y = (y + h / 2) * zoom - h / 2 + h
+        # self.translate_x = (x + w / 2) * zoom - w / 2
+        # self.translate_y = (y + h / 2) * zoom - h / 2 + h
 
         self.x, self.y = x, y
 
@@ -81,8 +81,17 @@ class Camera:
             self.vx = 0
 
     def screen_xy_to_world_xy(self, x, y):
-        x = (x + self.translate_x) / self._zoom
-        y = (y - self.translate_y) / -self._zoom
+        zoom = self._zoom
+        w, h = self._window.size
+
+        tx = (self.x + w / 2) * zoom - w / 2
+        ty = (self.y + h / 2) * zoom - h / 2 + h
+
+        x = (x + tx) / self._zoom
+        y = (y - ty) / -self._zoom
+
+        # x = (x + self.translate_x) / self._zoom
+        # y = (y - self.translate_y) / -self._zoom
 
         # matrix impl
         # inverted_transform_matrix = ~self.get_transform_matrix()
@@ -94,9 +103,16 @@ class Camera:
         # opengl renders things at (0, 0, 0)
         # translate the world in inverse direction relative to camera to simulate camera movement
         # y translates directly to flip coordinates
-        transform_matrix = self._window.view
-        transform_matrix = transform_matrix.translate((-self.translate_x, self.translate_y, 0))
+
+        x, y = self.x, self.y
         zoom = self._zoom
+        w, h = self._window.size
+
+        tx = (x + w / 2) * zoom - w / 2
+        ty = (y + h / 2) * zoom - h / 2 + h
+
+        transform_matrix = self._window.view
+        transform_matrix = transform_matrix.translate((-tx, ty, 0))
         transform_matrix = transform_matrix.scale((zoom, -zoom, 1))
         return transform_matrix
 
