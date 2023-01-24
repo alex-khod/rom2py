@@ -164,7 +164,7 @@ class RageOfMages2DataBin(KaitaiStruct):
             for i in range(7):
                 self.spells[i] = self._io.read_s4le()
 
-            self.server_ud = self._io.read_s4le()
+            self.server_id = self._io.read_s4le()
             self.known_spells = self._io.read_u4le()
             self.spell_skill = [None] * (5)
             for i in range(5):
@@ -183,18 +183,11 @@ class RageOfMages2DataBin(KaitaiStruct):
 
 
     class U1str(KaitaiStruct):
-
-        def __new__(cls, *args, **kwargs):
-            print(cls)
-            print(super(RageOfMages2DataBin.U1str, RageOfMages2DataBin.U1str))
-            return super().__new__(cls)
-
         def __init__(self, _io, _parent=None, _root=None):
             self._io = _io
             self._parent = _parent
             self._root = _root if _root else self
             self._read()
-            self = self.value
 
         def _read(self):
             self.length = self._io.read_u1()

@@ -18,11 +18,11 @@ class Alm2(RageOfMages2Alm):
 
     @property
     def width(self):
-        return self.general_map_info.width
+        return self.general.width
 
     @property
     def height(self):
-        return self.general_map_info.width
+        return self.general.width
 
     @property
     def heights(self):
@@ -174,8 +174,8 @@ def trigger_str(trigger):
     res += ['trigger \"%s\"%s. Is as follows:' % (trigger.name, rmt)]
     for i in range(3):
         left, right = i * 2, i * 2 + 1
-        check1_id = trigger.check_identifiers[left]
-        check2_id = trigger.check_identifiers[right]
+        check1_id = trigger.check_ids[left]
+        check2_id = trigger.check_ids[right]
         if not (check1_id and check2_id):
             continue
         try:
@@ -186,13 +186,13 @@ def trigger_str(trigger):
             res += ['and'] if i > 0 else ['if']
             res += ['[idk, bugged condition]']
             continue
-        check_op = trigger.check_operators[i]
+        check_op = RageOfMages2Alm.CheckOperator(trigger.check_operators[i])
         check_op_name = check_op_map[check_op]
         res += ['and'] if i > 0 else ['if']
         res += [check1, '%s (%s)' % (check_op.name, check_op_name), check2]
 
     res += ['\nthen']
-    iids = list(filter(lambda x: x, trigger.instance_identifiers))
+    iids = list(filter(lambda x: x, trigger.instance_ids))
     for i, iid in enumerate(iids):
         res += ['%d. %s' % (i + 1, instances_by_id[iid])]
     if not iids:
