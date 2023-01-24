@@ -109,35 +109,21 @@ def mainloop():
 
             # prototype dynamic redraw
 
-            tx1, ty1, tx2, ty2 = visible_rect(camera, alm)
-            tx1 = max(0, tx1)
-            tx2 = min(alm.width, tx2)
-            ty1 = max(0, ty1)
-            ty2 = min(alm.height, ty2)
+            from src.rects import Rect, filter_rects_by_intersect
+            camera_rect = Rect(camera.x, camera.y, camera.x + 1024, camera.y + 768)
+            drawables = world.units.units + world.objects.sprites
+
+            drawables = filter_rects_by_intersect(camera_rect, drawables)
 
             world.objects.frame_id += 1
 
-            for j in range(ty2, ty1):
-                for i in range(tx1, tx2):
-                    sp = world.objects.layer[Vec2(i, j)]
-                    if sp:
-                        sp.redraw()
-                    sp = world.units.layer[Vec2(i, j)]
-                    if sp:
-                        sp.redraw()
+            for sp in drawables:
+                sp.redraw()
 
             camera.end()
             game.gui.label.text = self.text
             game.gui.label.draw()
             game.gui.fps_display.draw()
-
-    def visible_rect(camera, alm):
-        xy = camera.screen_xy_to_world_xy(0, 0)
-        tx1, ty1, _, _ = alm.world_xy_to_tile_xy(*xy)
-        w, h = 1024, 768
-        end_xy = camera.screen_xy_to_world_xy(w, h)
-        tx2, ty2, _, _ = alm.world_xy_to_tile_xy(*end_xy)
-        return tx1, ty1, tx2, ty2
 
     map_viewport_rect = (0, 0, 1024, 768)
     map_viewport_size_px = map_viewport_rect[2:]
