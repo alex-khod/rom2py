@@ -121,20 +121,20 @@ class HeightMap:
 
     def tile_center_at(self, tile_xy: Vec2):
         h = self.tile_avg_heights_at(tile_xy)
-        xy = tile_xy.scale(TILE_SIZE) + Vec2(TILE_SIZE // 2, TILE_SIZE // 2 - h)
+        xy = tile_xy * TILE_SIZE + Vec2(TILE_SIZE // 2, TILE_SIZE // 2 - h)
         return xy
 
     def xyh_from_tile_xy(self, tile_xy: Vec2) -> Tuple[Vec2, float]:
-        xy = tile_xy.scale(TILE_SIZE)
+        xy = tile_xy * TILE_SIZE
         h = self.tile_avg_heights_at(tile_xy)
         return xy, h
 
     def xy_from_tile_xy(self, tile_xy: Vec2) -> Vec2:
-        return tile_xy.scale(TILE_SIZE)
+        return tile_xy * TILE_SIZE
 
     def draw_xy_from_tile_xy(self, tile_xy: Vec2) -> Vec2:
         avg_heights = self.tile_avg_heights_at(tile_xy)
-        return tile_xy.scale(TILE_SIZE) + Vec2(0, 0 - avg_heights)
+        return tile_xy * TILE_SIZE + Vec2(0, 0 - avg_heights)
 
 
 class Alm2(RageOfMages2Alm, HeightMap):

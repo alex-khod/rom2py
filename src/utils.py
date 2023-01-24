@@ -3,6 +3,7 @@ import os
 from pyglet.math import Vec2
 
 Vec2.__hash__ = lambda x: hash((x.x, x.y))
+Vec2.max_dxdy = lambda self, other: max(abs(self.x - other.x), abs(self.y - other.y))
 
 
 def _bisect_left(array, value):
@@ -15,7 +16,6 @@ def _bisect_left(array, value):
 
 
 def _bisect_left_bs(array, value):
-    prev = array[0]
     lo = 0
     hi = len(array) - 1
 

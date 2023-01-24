@@ -5,7 +5,6 @@ from src.utils import Vec2, lerp
 
 TILE_SIZE = 32
 
-
 class UnitSpriteKind(IntEnum):
     idle = 0
     move = 1
@@ -41,7 +40,7 @@ class RotateTask:
         self.progress.tick()
         factor = self.progress.progress
         angle = lerp(self.from_angle, self.final_angle, factor)
-        mobj.ai.angle = int(angle) % 256
+        mobj.ai.angle = int(angle) % movement.ROTATION_PHASES
         if factor >= 1:
             mobj.ai.angle = self.to_angle
             return True
@@ -75,6 +74,12 @@ class MoveTask:
         self.progress.tick()
         factor = self.progress.progress
         mobj.xy = self.from_xy.lerp(self.to_xy, factor)
+
+        mobj.rect.left = mobj.xy.x
+        mobj.rect.top = mobj.xy.y
+        mobj.rect.right = mobj.rect.left + mobj.sprite.image.width
+        mobj.rect.bottom = mobj.rect.top + mobj.sprite.image.height
+
         frame_id = lerp(mobj.ai.move_begin_phases, mobj.ai.move_phases - 1, factor)
         mobj.frame_id = int(frame_id)
 
@@ -93,7 +98,7 @@ class AttackTask:
         self.mobj = mobj
         self.target = target
 
-        self.progress = Progress(1 / mobj.ai.attack_phases, 0, mobj.ai.attack_phases)
+        self.progress = Progress(2 / mobj.ai.attack_phases, 0, mobj.ai.attack_phases)
 
     def tick(self):
         mobj = self.mobj

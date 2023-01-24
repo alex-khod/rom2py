@@ -14,6 +14,7 @@ class UnitAi:
     target = None
     tasks = None
     dead = False
+    new_vision_state = states.AIStateGuard
 
     def __init__(self):
         self.state = None
@@ -48,6 +49,8 @@ class ThinkSystem:
                     task = mobj.ai.state.get_next_task()
                     if task:
                         mobj.ai.tasks.append(task)
+                if not mobj.ai.tasks:
+                    to_pop.append(mobj.EID)
             while mobj.ai.tasks and mobj.ai.tasks[0].tick():
                 mobj.ai.tasks.popleft()
 
