@@ -1,10 +1,7 @@
 import pyglet
 import os
-from ..tilemap.base import TileMap
-
-from profilehooks import timecall, profile
-
-from src.resources import Resources, resource_at_root
+from ..tilemap import TileMap
+from src.resources import get_resource_at_root
 
 from pyglet.gl import *
 
@@ -104,7 +101,7 @@ class TileSprite(pyglet.sprite.Sprite):
             4, GL_TRIANGLES, [0, 1, 2, 0, 2, 3], self._batch, self._group,
             colors=('Bn', (*self._rgb, int(self._opacity)) * 4),
             translate=('f', (self._x, self._y, self._z) * 4),
-            scale=('f', (self._scale*self._scale_x, self._scale*self._scale_y) * 4),
+            scale=('f', (self._scale * self._scale_x, self._scale * self._scale_y) * 4),
             rotation=('f', (self._rotation,) * 4),
             tex_coords=('f', self._tc_nudge(self._texture.tex_coords, self._texture.width)))
         self._update_position()
@@ -135,7 +132,7 @@ class TerrainSpriteRenderer:
 
         batch = pyglet.graphics.Batch()
         wf_group = Wireframe()
-        blur_path = resource_at_root("resources", "blur128.png")
+        blur_path = get_resource_at_root("data", "blur128.png")
         self.blur = pyglet.image.load(blur_path).get_texture()
         blend_group = BlendGroup()
         blend_group.blur = self.blur
