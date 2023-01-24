@@ -1,3 +1,4 @@
+from src.formats.alm2 import HeightMap
 from . import TestCase
 from src.resources import Resources
 
@@ -24,14 +25,20 @@ class TestAlm(TestCase):
                 assert [h00, h10, h11, h01] == alm.tile_corner_heights_at(i, j)
 
     def test_heights_column_at(self):
-        alm = Resources.from_file("data", "atest.alm")
-        h, w = 4, 4
-        alm.general.width = w
-        alm.general.height = h
-        alm["heights"].body.heights = sum([[0, 0, 0, 1] for _ in range(h)], [])
-        assert alm.heights_column_at(w - 1) == (1, 1, 1, 1)
+        w, h = 4, 4
+        heights = [x for _ in range(h) for x in [0, 0, 0, 1]]
+        height_map = HeightMap(heights, w, h)
+        assert height_map.heights_column_at(w - 1) == (1, 1, 1, 1)
 
     def test_tilecoords_are_cached(self):
         alm = Resources.from_file("data", "atest.alm")
         tilecoords = alm.tilecoords
         assert id(alm.tilecoords) == id(tilecoords)
+
+    def test_lerp_heights(self):
+        alm = Resources.from_file("data", "atest.alm")
+        h, w = 2, 2
+        alm.general.width = w
+        alm.general.height = h
+        alm["heights"].body.heights = [0, 0]
+
