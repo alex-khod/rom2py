@@ -87,7 +87,7 @@ class Objects:
                 sprite._frame_id = 0
 
                 def obj_redraw(sprite):
-                    frame_id = self.frame_id % len(sprite.animation.frames)
+                    frame_id = (self.frame_id // 16) % len(sprite.animation.frames)
                     frame = sprite.animation.frames[frame_id]
                     texture = frame.image
                     sprite._set_texture(texture)
