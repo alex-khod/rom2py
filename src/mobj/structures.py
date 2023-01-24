@@ -21,9 +21,9 @@ class Structures:
     def prepare_structures(self):
         for sid, str_record in self.registry.structures_by_id.items():
             key = "structures\\" + str_record["filename"] + ".256"
-            frames = self.graphics.items[key.lower()]
+            frames = self.graphics[key.lower()]
             self.animations[sid] = frames
-            palette = self.graphics.items[key.lower() + "inner"]
+            palette = self.graphics[key.lower() + "inner"]
             self.palettes[sid] = palette
 
     def load_structures(self, alm):
