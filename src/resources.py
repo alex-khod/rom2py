@@ -168,13 +168,14 @@ rage_of_mages_1_res.RageOfMages1Res.ResourceRecordFile = ResourceRecordFile
 
 
 class Resource(rage_of_mages_1_res.RageOfMages1Res):
-    _cache = {}
+    _cache = None
 
     @classmethod
     def from_resource_name(cls, name):
         resources_path = get_rom2_path()
         resource_path = jn(resources_path, f"{name}.res")
         resource = cls.from_file(resource_path)
+        resource._cache = {}
         return resource
 
     def find_file(self, *path_parts):
@@ -234,7 +235,7 @@ class Resource(rage_of_mages_1_res.RageOfMages1Res):
     def unpack_res(self, out_path):
         for path, file in self.walk():
             file_path = jn(out_path, path, file.name)
-            os.makedirs(file_path, exist_ok=True)
+            os.makedirs(os.path.dirname(file_path), exist_ok=True)
             with open(file_path, 'wb') as f:
                 f.write(file.bytes)
 
