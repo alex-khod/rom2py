@@ -6,12 +6,13 @@ class Camera:
     """
         Bare-bones camera to allow zoom and translation over the view.
     """
-
+    PIXELS_PER_SECOND = 1
+    ZOOM_PER_MOUSE_Y_SCROLL = 5
     key_keypress = [PKey.UP, PKey.DOWN, PKey.LEFT, PKey.RIGHT]
     key_keyrelease = [PKey.UP, PKey.DOWN, PKey.LEFT, PKey.RIGHT]
-    ZOOM_PER_Y_SCROLL = 5
+    _stored_view = None
 
-    def __init__(self, window: pyglet.window.Window, scroll_speed=2400, min_zoom=1, max_zoom=4):
+    def __init__(self, window: pyglet.window.Window, scroll_speed=2400 * PIXELS_PER_SECOND, min_zoom=1, max_zoom=4):
         assert min_zoom <= max_zoom, "Minimum zoom must not be greater than maximum zoom"
         self._window = window
         self.scroll_speed = scroll_speed
@@ -50,14 +51,14 @@ class Camera:
         self.x, self.y = x, y
 
     def handle_scroll(self, scroll_y):
-        self.zoom += scroll_y / self.ZOOM_PER_Y_SCROLL
+        self.zoom += scroll_y / self.ZOOM_PER_MOUSE_Y_SCROLL
 
     def handle_keypress(self, symbol):
         scroll_speed = self.scroll_speed
         if symbol == PKey.UP:
-            self.vy = scroll_speed
-        if symbol == PKey.DOWN:
             self.vy = -scroll_speed
+        if symbol == PKey.DOWN:
+            self.vy = scroll_speed
         if symbol == PKey.LEFT:
             self.vx = -scroll_speed
         if symbol == PKey.RIGHT:
@@ -69,21 +70,35 @@ class Camera:
         elif symbol in [PKey.LEFT, PKey.RIGHT]:
             self.vx = 0
 
+    def screen_xy_to_world_xy(self, x, y):
+        inverted_transform_matrix = ~self.get_transform_matrix()
+        pos = inverted_transform_matrix @ pyglet.math.Vec4(x, y, 0, 1)
+        return pos.x, pos.y
+
+    def get_transform_matrix(self):
+        zoom = self._zoom
+        w, h = self._window.size
+        # x = self.x
+        # y = self.y + h
+        # offset translate by zoom screen difference to zoom in at screen center point
+        x = (self.x + w / 2) * zoom - w / 2
+        y = (self.y + h / 2) * zoom - h / 2 + h
+        z = 0
+        # opengl renders things at (0, 0, 0)
+        # translate the world in inverse direction relative to camera to simulate camera movement
+        # y translates directly because coordinates are flipped
+        transform_matrix = self._window.view
+        transform_matrix = transform_matrix.translate((-x, y, z))
+        transform_matrix = transform_matrix.scale((zoom, -zoom, 1))
+        return transform_matrix
+
     def begin(self):
         # Copy. I think it's based on tuple so should immutable and ref-by-value?
-        self._begin_view_mat = self._window.view
-
-        x = -self.x
-        y = -self.y + self._window.size[1]
-        z = 0
-        view_matrix = self._window.view.translate((x, y, z))
-        # Scale by zoom level.
-        view_matrix = view_matrix.scale((self._zoom, -self._zoom, 1))
-
-        self._window.view = view_matrix
+        self._stored_view = self._window.view
+        self._window.view = self.get_transform_matrix()
 
     def end(self):
-        self._window.view = self._begin_view_mat
+        self._window.view = self._stored_view
 
     def __enter__(self):
         self.begin()

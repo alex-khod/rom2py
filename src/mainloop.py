@@ -29,17 +29,19 @@ def mainloop():
         def on_key_release(self, symbol, modifiers):
             camera.handle_keyrelease(symbol)
 
-        def on_mouse_scroll(self, x, y, scroll_x, scroll_y):
+        def on_mouse_scroll(self, mouse_x, mouse_y, scroll_x, scroll_y):
             camera.handle_scroll(scroll_y)
+
+        def on_mouse_motion(self, mouse_x, mouse_y, dx, dy):
+            x, y = camera.screen_xy_to_world_xy(mouse_x, mouse_y)
+            cursor_sprite.update(x=x, y=y)
 
         def on_draw(self):
             camera.begin()
             self.clear()
-            terrain.render()
-            # objects.render()
-            # map_objects.atlas.texture.blit(0, 0)
-            # units.render()
+            terrain.draw()
             renderer.draw()
+            cursor_sprite.draw()
             camera.end()
             # fps_display.draw()
 
@@ -54,7 +56,7 @@ def mainloop():
     # window.projection = window.projection.orthogonal_projection(0, 1024, 0, 768, z_near=0, z_far=1)
 
     alm = Resources.get("scenario")["10.alm"].content
-    alm = Resources.from_file("data", "atest.alm")
+    # alm = Resources.from_file("data", "atest.alm")
 
     from src.renderers import PalettedSpriteRenderer as Renderer
     # from src.renderers import DefaultSpriteRenderer as Renderer
@@ -62,8 +64,12 @@ def mainloop():
     renderer = Renderer()
     terrain = Terrain(alm)
     objects = Objects(alm, renderer)
-    units = Units(alm, renderer)
+    # units = Units(alm, renderer)
     camera = Camera(window)
+
+    cursor_a16_sprite = Resources["graphics", "cursors", "arrow7", "sprites.16a"].content
+    image = cursor_a16_sprite[0].to_rgba_image_data()
+    cursor_sprite = pyglet.sprite.Sprite(image, 0, 0)
 
     def tick(dt):
         camera.scroll(dt)
