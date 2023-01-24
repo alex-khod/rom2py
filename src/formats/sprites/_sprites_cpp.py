@@ -16,10 +16,10 @@ class ROM256FrameCpp(ROM256Frame):
         output = bytes(w * h)
         _dll.ROM256_to_color_indexes(data, output, data_size, w, h)
         output = np.frombuffer(output, dtype="uint8").reshape(h, w)
-        # if self._x_flip:
-        #     output = self.do_x_flip(output)
-        # if self._canvas_size:
-        #     return self.blit_to_canvas(output)
+        if self._x_flip:
+            output = self.do_x_flip(output)
+        if self._canvas_size:
+            return self.blit_to_canvas(output)
         # free_dll()
         return output
 
