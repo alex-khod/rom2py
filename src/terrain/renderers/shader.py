@@ -44,7 +44,7 @@ class TerrainShaderRenderer:
         tot = alm.width * alm.height
         tileids = tuple(x.tile_id for x in alm["tiles"].body.tiles)
         tilenos = tuple(range(tot))
-        hate_map = sum([alm.heights_for_tile(i % alm.width, i // alm.width) for i in range(alm.width * alm.height)], [])
+        hate_map = sum([alm.tile_corner_heights_at(i % alm.width, i // alm.width) for i in range(alm.width * alm.height)], [])
         program.vertex_list(tot, GL_POINTS, tile_id=("i", tileids), tile_no=("i", tilenos), hate_map=("i", hate_map),
                             group=group, batch=batch)
         self.batch = batch
