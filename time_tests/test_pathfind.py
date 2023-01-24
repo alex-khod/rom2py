@@ -27,8 +27,9 @@ import numba
 
 class TestBfs(TestCase):
 
-    def setUp(self):
-        self.grid, self.start, self.goal = generate_grid()
+    @classmethod
+    def setUpClass(cls):
+        cls.grid, cls.start, cls.goal = generate_grid()
         # numba_bfs(self.grid, self.start, self.goal)
 
     def test_bfs(self):
