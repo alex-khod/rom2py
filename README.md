@@ -3,12 +3,13 @@ Rage of Mages 2 (ROM) implementation in python/opengl.
 
 # Current state:
 Can draw a bunch of animations...
+Some stuff can even move, wow
 
 # Dependencies
 Requires Python 3.7x.
-```
-git clone https://github.com/alex-khod/rom2py.git
+```thub.com/alex-khod/rom2py.git
 cd rom2py
+git clone https://gi
 pip install -r requirements.txt
 python setup.py build
 ```
