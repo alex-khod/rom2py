@@ -8,8 +8,6 @@ from src.resources import Resources
 from pyglet.gl import *
 
 jn = os.path.join
-import numpy as np
-
 MAP_PADDING = 8
 TILE_SIZE = 32
 WHITE = (255, 255, 255)
@@ -36,7 +34,7 @@ class TerrainShaderRenderer:
                 frames.append(frame)
             return pyglet.image.Animation(frames)
 
-        from src.shaders import get_terrain_shader
+        from src.graphics.shaders import get_terrain_shader
 
         program = get_terrain_shader()
         program.uniforms["map_size"].set((alm.width, alm.height))
@@ -55,4 +53,6 @@ class TerrainShaderRenderer:
     def draw(self):
         glActiveTexture(GL_TEXTURE0)
         glBindTexture(self.tilemap.texture.target, self.tilemap.texture.id)
+        glActiveTexture(GL_TEXTURE1)
+        glBindTexture(self.light_map_tex.target, self.light_map_tex.id)
         self.batch.draw()
