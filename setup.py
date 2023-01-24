@@ -9,6 +9,7 @@ def sprites_module(name):
 
 
 modules = [sprites_module(name) for name in ["_sprites_cy_func.pyx"]]
+modules += [os.path.join("time_tests", "filter_rects.pyx")]
 
 setup(
     ext_modules=cythonize(modules), include_dirs=[np.get_include()]
