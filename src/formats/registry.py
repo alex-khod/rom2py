@@ -17,14 +17,14 @@ class MapObjectInfo:
 
 
 class Registry(RageOfMages1Reg):
-    def root_descent(self, path=""):
-        for item in self.descent(self.nodes.header, path):
+    def walk(self, path=""):
+        for item in self._walk(self.nodes.header, path):
             yield item
 
-    def descent(self, node_header, path=""):
+    def _walk(self, node_header, path=""):
         for header in node_header:
             if header.rec_type == header.rec_type.__class__.directory:
-                for item in self.descent(header.value.value.header, os.path.join(path, header.name)):
+                for item in self._walk(header.value.value.header, os.path.join(path, header.name)):
                     yield item
             else:
                 yield path, header
@@ -86,7 +86,7 @@ class UnitRegistry(Registry):
         defaults = lambda: {"bonephases": 0,
                             "z": 0,
                             "dyingphases": 0,
-                            "tilesize": 1 }
+                            "tilesize": 1}
         self._units_by_id = self._load_records(units_raw, defaults)
         for k, v in self._units_by_id.items():
             self._units_by_id[k]['filename'] = self.files[v['file']]
@@ -116,29 +116,11 @@ class ObjectRegistry(Registry):
         assert (len(files_raw) == self.file_count)
         assert (len(objects_raw) == self.object_count)
 
-    def get_animation(self, oid):
-        if "animation" not in self.objects_by_id:
-            return self.objects_by_id["animation"]
+class ProjectileRegistry(Registry):
+    def __init__(self, _io, _parent=None, _root=None):
+        super().__init__(_io, _parent, _root)
+        nodes = self.nodes.header
+        projectiles_raw = list(filter(lambda x: x.name != "Global", nodes))
+        self.projectiles_by_id = self._load_records(projectiles_raw)
 
-        graphics_res = Resources["graphics"]
-        for oid, obj_record in self.objects_by_id.items():
-            a256 = graphics_res["objects", obj_record["filename"] + '.256'].content
-            frames = []
-            animationframes = obj_record["index"]
-            animationtimes = None
-            try:
-                animationframes = obj_record["animationframe"]
-                animationtimes = obj_record["animationtime"]
-            except KeyError:
-                pass
-            for frame_no, duration in zip(animationframes, animationtimes):
-                w, h = obj_record["width"], obj_record["height"]
-                image = a256[frame_no]
-                cx, cy = obj_record["centerx"], obj_record["centery"]
-                # image.anchor_x = cx
-                # image.anchor_y = cy
-                # duration = duration / 60 if duration else None
-                # frame = pyglet.image.AnimationFrame(image, duration)
-                frames.append(frame)
-            assert len(animationtimes) == len(animationframes)
-            obj_record["framedata"] = frames
+
