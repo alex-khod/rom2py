@@ -20,17 +20,20 @@ def backtrace(parent, start, goal):
 def bfs(grid, start, goal):
     parent = {}
     w = h = len(grid)
+    # convert from vector to tuple
+    start = tuple(start)
+    goal = tuple(goal)
     q = collections.deque([(start, tuple())])
     visited = {start}
+
+    moves = [(-1, 0), (1, 0), (0, -1), (0, 1)]
+    moves += [(-1, -1), (-1, 1), (1, -1), (1, 1)]
+
     while q:
         for i in range(len(q)):
             (x, y), path = q.pop()
             if (x, y) == goal:
                 return backtrace(parent, start, goal)
-
-            # evaluation order is
-            moves = [(-1, 0), (1, 0), (0, -1), (0, 1)]
-            moves += [(-1,-1), (-1, 1), (1, -1), (1, 1)]
 
             for dx, dy in moves:
                 if dy == 0 and dx == 0:
