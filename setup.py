@@ -11,5 +11,18 @@ def sprites_module(name):
 modules = [sprites_module(name) for name in ["_sprites_cy_func.pyx"]]
 
 setup(
-    ext_modules=cythonize(modules), include_dirs=[np.get_include()], language_level=3
+    ext_modules=cythonize(modules), include_dirs=[np.get_include()]
+)
+
+from distutils.core import setup, Extension
+
+
+def c_module(name):
+    return os.path.join("src", "_c_extensions", name)
+
+
+c_modules = [Extension("src._c_extensions.routines", [c_module("routines.c")])]
+
+setup(
+    ext_modules=c_modules
 )

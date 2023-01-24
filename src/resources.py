@@ -52,16 +52,22 @@ def free_dll():
 def setup_sprites():
     loaded = False
     try:
-        from src.formats.sprites import _sprites_cpp
         lazy_load_dll()
+        from src.formats.sprites import _sprites_cpp
         _sprites_cpp.lazy_load_dll = lazy_load_dll
-        content.Selector.ext_map[".256"] = _sprites_cpp.ROM256Cpp
+        # content.Selector.ext_map[".256"] = _sprites_cpp.ROM256Cpp
         content.Selector.ext_map[".16a"] = _sprites_cpp.ROM16ACpp
         loaded = True
     except:
         import traceback
         traceback.print_exc()
         print("Can't initialize cpp sprite loader, using default implementation...")
+
+    try:
+        from src.formats.sprites import _sprites_cext
+        content.Selector.ext_map[".256"] = _sprites_cext.ROM256CExt
+    except:
+        pass
 
 
 setup_sprites()
