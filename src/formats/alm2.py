@@ -48,18 +48,18 @@ class Alm2(RageOfMages2Alm):
     def tile_id_to_tilecoords(self, tile_id):
         # terrain_id = (tile_id >> 8)
         # column_id = (tile_id >> 4) & 0xF
-        # stripe_id = terrain_id * self.TERRAIN_WIDTH_PER_ID + column_id
+        # column_id = terrain_id * self.TERRAIN_WIDTH_PER_ID + column_id
         # row_id = min(tile_id & 0xF, 13 if terrain_id != 2 else 7)
 
-        tilemap_x = tile_id >> 4  # aka stripe_id
-        tilemap_y = tile_id & 0xF  # aka row_id
+        tilemap_x = tile_id >> 4  # column_id
+        tilemap_y = tile_id & 0xF  # row_id
         return tilemap_x, tilemap_y
 
     @property
     def tilecoords(self):
         """
-        Terrain tiles are divided into 32px wide stripes of varying length, that reside in "graphics.res / terrain /".
-        Stripes have names in format tileX-YY, where X is terrain id=[0..3], and YY is column id=[0..15].
+        Terrain tiles are divided into 32px wide columns of varying length, that reside in "graphics.res / terrain /".
+        columns have names in format tileX-YY, where X is terrain id=[0..3], and YY is column id=[0..15].
         Terrain
 
         :return: list of tilecoords[tilemap_y][tilemap_x]

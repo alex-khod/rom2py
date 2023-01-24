@@ -147,7 +147,7 @@ class TerrainSpriteRenderer:
         def water_tile_anim(terrain_start):
             frames = []
             for frameid in range(TERRAIN_FRAMES):
-                next_frame_id = terrain_start + (stripe_id + frameid * TERRAIN_FRAMES) % TERRAIN_WIDTH_PER_ID
+                next_frame_id = terrain_start + (column_id + frameid * TERRAIN_FRAMES) % TERRAIN_WIDTH_PER_ID
                 frame = self.tilemap[next_frame_id][row_id]
                 frame = pyglet.image.AnimationFrame(frame, 16 / 60)
                 frames.append(frame)
@@ -156,14 +156,14 @@ class TerrainSpriteRenderer:
         sprites = []
         for tile_y in range(alm.height):
             for tile_x in range(alm.width):
-                stripe_id, row_id = alm.tilecoords[tile_y][tile_x]
+                column_id, row_id = alm.tilecoords[tile_y][tile_x]
                 x1, y1 = tile_x * TILE_SIZE, tile_y * TILE_SIZE
 
                 # pretend a tile is a single frame animation
-                animation = self.tilemap[stripe_id][row_id]
+                animation = self.tilemap[column_id][row_id]
 
-                # animation = water_tile_anim(stripe_id - stripe_id % 16)
-                if WATER_TILE_START < stripe_id < WATER_TILE_START + TERRAIN_WIDTH_PER_ID:
+                # animation = water_tile_anim(column_id - column_id % 16)
+                if WATER_TILE_START < column_id < WATER_TILE_START + TERRAIN_WIDTH_PER_ID:
                     animation = water_tile_anim(WATER_TILE_START)
 
                 sprite = TileSprite(animation, x=x1, y=y1, batch=batch)

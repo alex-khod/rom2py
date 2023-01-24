@@ -21,15 +21,15 @@ void main() {
     const float TILE_SIZE = 32.0;
 
     uint tile_id = uint(gs_in[0].tile_id);
-    float stripe_id = tile_id >> 4u;
+    float column_id = tile_id >> 4u;
     float row_id = tile_id & 15u;
-    //    stripe_id = [28..31] - rock tiles
-    //    stripe_id = [32..48] - water tiles
-    is_passable = float((stripe_id > 27.5) && (stripe_id < 49.5));
+    //    column_id = [28..31] - rock tiles
+    //    column_id = [32..48] - water tiles
+    is_passable = float((column_id > 27.5) && (column_id < 49.5));
     // not
     is_passable = 1.0 - is_passable;
 
-    vec2 tx_offset = vec2(stripe_id * TILE_SIZE, row_id * TILE_SIZE);
+    vec2 tx_offset = vec2(column_id * TILE_SIZE, row_id * TILE_SIZE);
     float nudge = 2.0;
 
     vec4 hate_map = gs_in[0].hate_map;

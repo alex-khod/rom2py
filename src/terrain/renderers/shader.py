@@ -29,7 +29,7 @@ class TerrainShaderRenderer:
             TERRAIN_FRAMES = 4
             frames = []
             for frameid in range(TERRAIN_FRAMES):
-                next_frame_id = terrain_start + (stripe_id + frameid * TERRAIN_FRAMES) % TERRAIN_WIDTH_PER_ID
+                next_frame_id = terrain_start + (column_id + frameid * TERRAIN_FRAMES) % TERRAIN_WIDTH_PER_ID
                 frame = self.tiles[next_frame_id][row_id]
                 frame = pyglet.image.AnimationFrame(frame, 16 / 60)
                 frames.append(frame)
