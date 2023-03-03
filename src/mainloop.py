@@ -20,8 +20,8 @@ from src.terrain import Terrain
 from src.mobj import Objects, Units, Structures
 from src.camera import Camera
 
-from src.systems import ThinkSystem, UnitAi, UnitSpriteKind, AttackTask, DieTask
-from src.terrain.terrain import TileObject
+from src.terrain.renderers import TileSprite
+from src.systems import ThinkSystem
 
 jn = os.path.join
 
@@ -99,13 +99,13 @@ def mainloop():
             # cursor_sprite.draw()
             glDisable(GL_DEPTH_TEST)
 
-            hover.sprite.draw()
+            hover.draw()
             if hover.ticks > 0:
                 hover.ticks -= 1
             else:
-                hover.sprite.opacity = 64
+                hover.opacity = 64
 
-            select.sprite.draw()
+            select.draw()
 
             # prototype dynamic redraw
 
@@ -175,8 +175,7 @@ def mainloop():
         world.units.load_units(alm)
         world.structures = Structures(alm, renderer)
 
-        think = ThinkSystem()
-        think.world = world
+        think = ThinkSystem(world)
 
         class GameGui:
             selection: list
@@ -203,8 +202,11 @@ def mainloop():
     # cursor_sprite = pyglet.sprite.Sprite(image, 0, 0)
     # sprites = objects.sprites + units.sprites
 
-    hover = TileObject(color=(255, 0, 0, 255), opacity=64, z=254)
-    select = TileObject(color=(0, 255, 0, 255), z=255)
+    hover = TileSprite.from_color(color=(255, 0, 0, 64))
+    hover.z = 254
+    hover.ticks = 0
+    select = TileSprite.from_color(color=(0, 255, 0, 255))
+    select.z = 255
 
     def tick(dt):
         camera.scroll(dt)

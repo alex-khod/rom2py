@@ -1,4 +1,4 @@
-from typing import List
+from typing import List, Tuple
 
 import pyglet
 import os
@@ -56,6 +56,11 @@ from src.utils import Vec2
 
 class TileSprite(pyglet.sprite.Sprite):
     _heights = (0, 0, 0, 0)
+    @classmethod
+    def from_color(self, color):
+        image = pyglet.image.SolidColorImagePattern(color).create_image(32, 32)
+        sprite = TileSprite(image)
+        return sprite
 
     @property
     def heights(self):
@@ -142,8 +147,6 @@ class TileSprite(pyglet.sprite.Sprite):
             assert len(texture.tex_coords) == 12, "Texture coords have some freaky length?"
             self._vertex_list.tex_coords[:] = self._tc_nudge(texture.tex_coords, texture.width)
         self._texture = texture
-
-
 class TerrainSpriteRenderer:
 
     def __init__(self, alm):
