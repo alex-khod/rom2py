@@ -71,6 +71,7 @@ class Units:
                 try:
                     palettes.append(self.graphics[path])
                 except KeyError:
+                    # print("Palette not found", path)
                     pass
             self.palettes[utid] = palettes
 

@@ -71,11 +71,12 @@ class PalettedSprite(pyglet.sprite.Sprite):
     def _create_vertex_list(self):
         if not self._palette_tex:
             return
+        _palette_tex = self._palette_tex[0]
         self._vertex_list = self.program.vertex_list_indexed(
             4, GL_TRIANGLES, [0, 1, 2, 0, 2, 3], self._batch, self._group,
             translate=('f', (self._x, self._y, self._z) * 4),
             tex_coords=('f', self._texture.tex_coords),
-            pal_coords=('f', self._palette_tex.tex_coords[:3] * 4),
+            pal_coords=('f', _palette_tex.tex_coords[:3] * 4),
             colors=('Bn', (*self._rgb, int(self._opacity)) * 4),
         )
         self._update_position()

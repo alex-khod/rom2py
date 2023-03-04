@@ -1,4 +1,4 @@
-__version__ = "0.0.5"
+__version__ = "0.1.0"
 
 import math
 import random
@@ -49,7 +49,7 @@ def mainloop():
             tile_xy = Vec2(tile_x, tile_y)
 
             # click indication
-            hover.sprite.opacity = 255
+            hover.opacity = 255
             hover._ticks = 4
 
             selection = game.gui.selection
@@ -63,7 +63,7 @@ def mainloop():
                 if selection:
                     mobj = selection[0]
                     print(mobj, "going to", tile_x, tile_y)
-                    game.think.move_to_tile_xy(mobj, map_grid, (tile_x, tile_y))
+                    # game.think.move_to_tile_xy(mobj, (tile_x, tile_y))
 
         def on_mouse_scroll(self, mouse_x, mouse_y, scroll_x, scroll_y):
             camera.handle_scroll(scroll_y)
@@ -75,14 +75,14 @@ def mainloop():
             tile_x, tile_y, l, r = alm.world_xy_to_tile_xy(x, y)
 
             pos_txy = Vec2(tile_x, tile_y)
-            hover.sprite.set_shape_from_tile_xy(alm, pos_txy)
+            hover.set_shape_from_tile_xy(alm, pos_txy)
 
             # prototype select hint
             if game.world.units.layer[pos_txy]:
-                select.sprite.set_shape_from_tile_xy(alm, pos_txy)
-                select.sprite.opacity = 127
+                select.set_shape_from_tile_xy(alm, pos_txy)
+                select.opacity = 127
             else:
-                select.sprite.opacity = 0
+                select.opacity = 0
 
             self.text = f"x{int(x)} y{int(y)} tx{tile_x} ty{tile_y} l{l} r{r}"
 
@@ -92,6 +92,20 @@ def mainloop():
             # glDepthFunc(GL_GREATER)
             camera.begin()
             self.clear()
+
+            # dict = graphics.textures
+            # a = 0
+            # for key, tex in dict.items():
+            #     tex.blit(0, a)
+            #     a += tex.height
+
+            # a = 0
+            # for key, tex_list in graphics._items.items():
+            #     if key.endswith("inner"):
+            #         for tex in tex_list:
+            #             tex.blit(0, a)
+            #             a += 1
+
             world = game.world
             world.terrain.draw()
             # rgb_renderer.draw()
@@ -100,8 +114,8 @@ def mainloop():
             glDisable(GL_DEPTH_TEST)
 
             hover.draw()
-            if hover.ticks > 0:
-                hover.ticks -= 1
+            if hover._ticks > 0:
+                hover._ticks -= 1
             else:
                 hover.opacity = 64
 
@@ -204,7 +218,7 @@ def mainloop():
 
     hover = TileSprite.from_color(color=(255, 0, 0, 64))
     hover.z = 254
-    hover.ticks = 0
+    hover._ticks = 0
     select = TileSprite.from_color(color=(0, 255, 0, 255))
     select.z = 255
 

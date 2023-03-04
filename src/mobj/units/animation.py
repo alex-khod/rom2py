@@ -176,15 +176,15 @@ class UnitAnimationSequencer:
         flipstart = total_facings // 2
         frames = []
         for idx in frameids:
-            x_flip = int(self.x_flip and facing > flipstart)
-            # NOOOO that shouldn't have happened. Sequencer shouldn't need to know HOW to flip the image,
-            # only that it needs to be flipped. Oh well...
             frame = unit_frames[idx]
             record = self.unit_record
             w, h = record["width"], record["height"]
             cx, cy = record["centerx"], record["centery"]
             frame.anchor_x = cx + (-w + frame.width) // 2
             frame.anchor_y = cy + (-h + frame.height) // 2
+            x_flip = int(self.x_flip and facing > flipstart)
+            # NOOOO that shouldn't have happened. Sequencer shouldn't need to know HOW to flip the image,
+            # only that it needs to be flipped. Oh well...
             if x_flip:
                 frame = frame.get_transform(flip_x=True)
             frames.append(frame)

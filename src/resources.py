@@ -125,6 +125,8 @@ class Resources(object, metaclass=ResourcesMeta):
         "objects.reg": ("graphics", "objects", "objects.reg"),
         "units.reg": ("graphics", "units", "units.reg"),
         "projectiles.reg": ("graphics", "projectiles", "projectiles.reg"),
+        "rom256_example" : ("graphics", "units", "monsters", "bat", "sprites.256"),
+        "rom16a_example": ("graphics", "inventory", "0001002.16a")
     }
 
     @classmethod
