@@ -17,9 +17,13 @@ x64
 .idea
 
 # random stuff
+models
+textures
 output
 sdl2
 snippets
 articles
 sprite_inject
 rom2books
+textures
+models
