@@ -6,13 +6,14 @@ from pyglet.image.atlas import Allocator, AllocatorException
 from pyglet.gl import *
 import PIL.Image
 
+
 class Texture(pyglet.image.Texture):
     internalformat = None
     fmt = None
 
     @classmethod
     def create(cls, width, height, target=GL_TEXTURE_2D, internalformat=GL_RGBA8, min_filter=None, mag_filter=None,
-               fmt=GL_RGBA):
+               fmt=GL_RGBA, blank_data=True):
         texture = super().create(width, height, target, internalformat, min_filter, mag_filter, fmt)
         texture.internalformat = internalformat
         texture.fmt = fmt
@@ -125,11 +126,11 @@ class TextureBin:
 
 
 def r_texture_bin():
-    return TextureBin.customize(GL_RED, GL_RED)
+    return TextureBin.customize(GL_RED, GL_RGBA)
 
 
 def rg_texture_bin():
-    return TextureBin.customize(GL_RG, GL_RG)
+    return TextureBin.customize(GL_RG, GL_RGBA)
 
 
 class TextureAtlas:
