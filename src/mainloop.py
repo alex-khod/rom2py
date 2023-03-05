@@ -7,6 +7,7 @@ from typing import Tuple
 from unittest.mock import Mock
 
 import pyglet
+from profilehooks import timecall
 from pyglet.gl import *
 import os
 
@@ -93,6 +94,15 @@ def mainloop():
             camera.begin()
             self.clear()
 
+            @timecall
+            def draw_sprites():
+                batch = pyglet.graphics.Batch()
+                sprites = []
+                solid = pyglet.image.SolidColorImagePattern((255, 255, 255, 255)).create_image(32, 32)
+                for i in range(100):
+                    sprite = pyglet.sprite.Sprite(solid, random.randint(0, 1024), random.randint(0, 1024), batch=batch)
+                    sprites.append(sprite)
+                batch.draw()
             # dict = graphics.textures
             # a = 0
             # for key, tex in dict.items():
