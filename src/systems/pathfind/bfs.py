@@ -41,6 +41,8 @@ def bfs(grid, start, goal):
                 nx = x + dx
                 ny = y + dy
                 if -1 < nx < w and -1 < ny < h and (nx, ny) not in visited:
+                    if grid[ny][nx] & 8 == 1:
+                        continue
                     parent[(nx, ny)] = x, y
                     visited.add((nx, ny))
                     q.appendleft(((nx, ny), path + (nx, ny)))

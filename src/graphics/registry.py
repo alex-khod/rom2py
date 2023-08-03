@@ -9,18 +9,27 @@ from src.formats import codecs
 from pyglet.gl import *
 from src.resources import Resources
 
-class GraphicsRegistry:
+
+class TextureRegistry:
+    _instance = None
     tex_encoder = codecs.RawTextureEncoder
     tex_decoder = codecs.RawTextureDecoder
+
+    @classmethod
+    def get_instance(cls):
+        instance = cls._instance or cls()
+        cls._instance = instance
+        return instance
 
     def __init__(self):
         self.rom16a_bin = rg_texture_bin()
         self.rom256_bin = r_texture_bin()
         self.palette_atlas = TextureAtlas(width=2048, height=2048)
         self._items = {}
+        print(self._items)
         # self.load_all_graphics()
-        # self.save("textures_raw")
-        self.open("textures_raw")
+        # self.save("textures/raw")
+        self.open("textures/raw")
 
     @property
     def ext_mapping(self):

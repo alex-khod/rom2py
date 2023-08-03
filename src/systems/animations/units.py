@@ -7,7 +7,7 @@ from enum import IntEnum
 from profilehooks import timecall
 
 from src.resources import Resources
-from .cache import UnitsCache
+from ...formats.registry import UnitRecord
 
 
 class EAnimType(IntEnum):
@@ -68,21 +68,20 @@ class EDirection16(EDirection):
 
 assert len(EDirection16) == 16
 
-
 class UnitAnimationSequencer:
     """
     The class retrieves frame_ids or frames themselves for animations.
     Length of animations is defined by 1) unit_record, a part of units registry "units.reg"
     2) Unit's associated .256 sprite, defined in unit_record.
 
-    The .256 sprite for a unit is a collection of frames, ordered in 5 groups - idle, move, attack, die, bones,
+    The .256 sprite for a self is a collection of frames, ordered in 5 groups - idle, move, attack, die, bones,
     that represent a particular animation type.
     Groups themselves are ordered in by direction - a complete animation for direction 0, then direction 1, etc.
     Idle group has either 9 or 16 directions (depending on horizontal flip x_flip flag of the unit_record).
-    Direction 0 corresponds to a unit that faces downwards, and then 1 and subsequent directions correspond to
+    Direction 0 corresponds to a self that faces downwards, and then 1 and subsequent directions correspond to
     clockwise direction with some angle: ↓ ↙ ← ↖ ↑ ↗ → ↘.
 
-    1. Idle group, just one frame of a unit looking in a particular direction, per direction.
+    1. Idle group, just one frame of a self looking in a particular direction, per direction.
     There are 16 or 9 directions for this group, depending on x_flip. The directions correspond to EDirection16 enum.
 
     If x_flip is off, there is 16 directions and 16 frames for the group.
@@ -104,19 +103,17 @@ class UnitAnimationSequencer:
     types = EAnimType
     facings = EDirection8
 
-    def __init__(self, unit_frames, unit_record):
+    def __init__(self, unit_record: "UnitRecord"):
         self.unit_record = unit_record
-        self.unit_frames = unit_frames
+        self._has_dying_anim = unit_record.dying == unit_record.id
 
-        self._has_dying_anim = not ('dying' in unit_record and unit_record["dying"] != unit_record["id"])
+        moves = unit_record.movephases
+        movestart = unit_record.movebeginphases
+        attacks = unit_record.attackphases
+        deaths = unit_record.dyingphases
+        bones = unit_record.bonephases
 
-        moves = unit_record['movephases']
-        movestart = unit_record['movebeginphases']
-        attacks = unit_record['attackphases']
-        deaths = unit_record['dyingphases']
-        bones = unit_record['bonephases']
-
-        self.x_flip = int('flip' in unit_record and unit_record['flip'])
+        self.x_flip = unit_record.flip
 
         # len(↙ ← ↖) = 3 directions are flipped
         facings_sans_flip = len(EDirection8) - self.x_flip * 3
@@ -149,16 +146,22 @@ class UnitAnimationSequencer:
         return self.offsets_by_type[atype] + facing * self.length_by_type[atype]
 
     def frameids(self, atype: EAnimType, facing: int):
+        count = self.length_by_type[atype]
         offset = self.offset(atype, facing)
-        movestart = self.unit_record['movebeginphases']
+        offsets = list(range(offset, offset+count))
+        return offsets
+
+    def frameids_(self, atype: EAnimType, facing: int):
+        offset = self.offset(atype, facing)
+        movestart = self.unit_record.movebeginphases
         if atype == EAnimType.move:
-            frameids = list(range(movestart)) + [fidx + movestart for fidx in self.unit_record['moveanimframe']]
+            frameids = list(range(movestart)) + [fidx + movestart for fidx in self.unit_record.moveanimframe]
         elif atype == EAnimType.attack:
-            frameids = self.unit_record['attackanimframe']
+            frameids = self.unit_record.attackanimframe
         elif atype in (EAnimType.die, EAnimType.bones):
             if not self._has_dying_anim:
-                text = self.unit_record["desctext"]
-                id = self.unit_record["id"]
+                text = self.unit_record.desctext
+                id = self.unit_record.id
                 raise Exception(f"{id} ({text}) Don't know how to - \"die\"")
             frameids = list(range(self.length_by_type[atype]))
         else:
@@ -169,8 +172,7 @@ class UnitAnimationSequencer:
         frameids = list(map(lambda fidx: fidx + offset, frameids))
         return frameids
 
-    def sequence(self, atype: EAnimType, facing: int):
-        unit_frames = self.unit_frames
+    def sequence(self, unit_frames: list, atype: EAnimType, facing: int):
         frameids = self.frameids(atype, facing)
         total_facings = len(self.facings_by_type(atype=atype))
         flipstart = total_facings // 2
@@ -178,8 +180,8 @@ class UnitAnimationSequencer:
         for idx in frameids:
             frame = unit_frames[idx]
             record = self.unit_record
-            w, h = record["width"], record["height"]
-            cx, cy = record["centerx"], record["centery"]
+            w, h = record.width, record.height
+            cx, cy = record.centerx, record.centery
             frame.anchor_x = cx + (-w + frame.width) // 2
             frame.anchor_y = cy + (-h + frame.height) // 2
             x_flip = int(self.x_flip and facing > flipstart)
@@ -191,55 +193,26 @@ class UnitAnimationSequencer:
         return frames
 
 
-class AnimRegistry:
-    _cache = None
+class AnimationRegistry:
+    _instance = None
 
-    @timecall
-    def __init__(self, unit_registry=None):
-        if not self.__class__._cache is None:
-            return
-        # broken
+    @classmethod
+    def get_instance(cls):
+        instance = cls._instance or cls()
+        cls._instance = instance
+        return instance
 
-        # if unit_registry is None:
-        #     unit_registry = Resources.special('units.reg').content
-        # self.unit_registry = unit_registry
-        #
-        # units_by_id = unit_registry.units_by_id
-        # animstate_by_id = {}
-        # anim_by_id = {}
-        #
-        # for type_id, unit_record in units_by_id.items():
-        #     filename = unit_record["filename"]
-        #     unit256 = Resources["graphics", "units", filename + '.256'].content
-        #     unit256._cache = UnitsCache()[filename]
-        #     animstate_by_id[type_id] = AnimState(unit_record, unit256)
-        #     anim_by_id[type_id] = PygletAnim(unit_record, unit256)
-        #
-        # for type_id, unit_record in units_by_id.items():
-        #     if 'dying' in unit_record and unit_record["dying"] != unit_record["id"]:
-        #         dying_id = unit_record['dying']
-        #         animstate_by_id[type_id].dyinganim = animstate_by_id[dying_id]
-        #         anim_by_id[type_id].dyinganim = animstate_by_id[dying_id]
-        #
-        # pyg_anim_by_id = {}
-        # self.texture_bin = pyglet.image.atlas.TextureBin()
-        # for type_id, unit_record in units_by_id.items():
-        #     anim = anim_by_id[type_id]
-        #     pyg_anim_by_id[type_id] = {}
-        #     for atype in anim.types:
-        #         pyg_anim_by_id[type_id][atype] = {}
-        #         for facing in anim.facings_by_type(atype):
-        #             pyg_anim_by_id[type_id][atype][facing] = anim.animation(atype, facing, self.texture_bin)
-        #
-        # self.animstate_by_id = animstate_by_id
-        # self.anim_by_id = anim_by_id
-        # self.pyg_anim_by_id = pyg_anim_by_id
+    def __init__(self):
+        unit_registry = Resources.special('units.reg').content
+        self.units_by_id = unit_registry.units_by_id
+        units_by_id = self.units_by_id
+        self.seq_by_utid = {}
+        for type_id, unit_record in units_by_id.items():
+            self.seq_by_utid[type_id] = UnitAnimationSequencer(unit_record)
 
-    def __getitem__(self, key):
-        if type(key) is int:
-            type_id = key
-            return self.animstate_by_id[type_id]
-        elif type(key) is tuple:
-            type_id, atype, facing = key
-            return self.pyg_anim_by_id[type_id][atype][facing]
-        raise KeyError("Can't handle key: %s" % key)
+    def get(self, utid, anim_type: EAnimType):
+        if anim_type != EAnimType.die:
+            return self.seq_by_utid[utid]
+        unit_record = self.units_by_id[utid]
+        if unit_record.dying != unit_record.id:
+            return self.seq_by_utid[unit_record.dying]

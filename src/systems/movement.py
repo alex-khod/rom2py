@@ -7,15 +7,15 @@ from typing import Tuple, List
 from src.formats.alm2 import Alm2
 from src.utils import Vec2, lerp
 
-from src import pathfind
-
 # directions_map = ((3, 4, 5),
 #                   (2, 7, 6),
 #                   (1, 0, 7))
 
 directions_map = ((96, 128, 160),
-                  (64, 192, 192),
+                  (64, 0, 192),
                   (32, 0, 224))
+
+ROTATION_PHASES = len(directions_map)
 
 
 def direction_to_tile(from_xy: Vec2, to_xy: Vec2):
@@ -35,17 +35,3 @@ def angle_diff_shortest(angle_from: int, angle_to: int, period=256):
     if diff > half_period:
         return diff - period
     return diff
-
-
-class Pathfinder:
-    def __init__(self, world: 'World', from_tile_xy, to_tile_xy):
-        self.path = pathfind.bfs(world.grid, from_tile_xy, to_tile_xy)
-        self.from_tile_xy = from_tile_xy
-        self.to_tile_xy = to_tile_xy
-
-    def get_next_tile(self, to_tile_xy: Vec2):
-        if self.to_tile_xy == to_tile_xy:
-            if self.path:
-                return Vec2(*self.path[-1])
-            return None
-        raise NotImplementedError

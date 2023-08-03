@@ -25,10 +25,10 @@ def draw_indexed_test(self):
     glEnable(GL_TEXTURE_2D)
     glBindTexture(GL_TEXTURE_2D, self.tiles_tex.id)
     pyglet.graphics.draw_indexed(6, GL_QUADS, (0, 1, 2, 3, 2, 3, 5, 6, 7, 8),
-                                 ("v2i", (
+                                  ("v2i", (
                                      x1, y1, x2, y1, x2, y2, x1, y2, x2 + TILE_SIZE, y2 + TILE_SIZE, x2 + TILE_SIZE,
                                      y2)),
-                                 ("c3B", 6 * WHITE))
+                                  ("c3B", 6 * WHITE))
     # pyglet.graphics.draw_indexed(n, GL_QUADS, idxs, ("v2i", verts), ("c3B", n * WHITE), ("t3f", tex_cs))
     glPolygonMode(GL_FRONT_AND_BACK, GL_LINE)
     pyglet.graphics.draw_indexed(n, GL_QUADS, idxs, ("v2i", verts), ("c3B", n * WHITE))

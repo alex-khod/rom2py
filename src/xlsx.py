@@ -56,7 +56,7 @@ def transform_coords(x, y):
     MAP_PADDING = 8
     x = x >> 8
     y = y >> 8
-    # (unit.x >> 8) + (unit.x & 0xFF) / 256,                   
+    # (self.x >> 8) + (self.x & 0xFF) / 256,
     return x, y
 
 

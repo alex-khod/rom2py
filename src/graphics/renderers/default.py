@@ -2,8 +2,6 @@ import pyglet
 from src.graphics.textures import TextureBin
 
 MAP_PADDING = 8
-TILE_SIZE = 32
-
 
 class AnimSprite(pyglet.sprite.Sprite):
 

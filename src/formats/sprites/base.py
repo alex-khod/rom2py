@@ -7,6 +7,7 @@ from pyglet.image import ImageData
 
 TILE_SIZE = 32
 
+
 def texture_to_pil_image(texture):
     data = texture.get_image_data().get_data()
     w, h = texture.length, texture.height
@@ -270,14 +271,22 @@ class Palette:
 
 class BmpHandler:
 
+    def __init__(self, image):
+        self.image = image
+
+    def get_image_data(self):
+        image = self.image
+        _bytes = self.image.tobytes()
+        return ImageData(image.width, image.height, image.mode, data=_bytes, pitch=-len(image.mode)*image.width)
+
     @classmethod
     def from_file(cls, path):
-        return PILImage.open(path)
+        return cls(PILImage.open(path))
 
     @classmethod
     def from_bytes(cls, data):
         bytesio = io.BytesIO(data)
-        return PILImage.open(bytesio)
+        return cls(PILImage.open(bytesio))
 
 
 __all__ = ["ROM256", "ROM256Frame", "ROM16A", "ROM16AFrame", "Palette", "BmpHandler"]

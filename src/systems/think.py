@@ -2,14 +2,14 @@ from collections import deque
 from dataclasses import dataclass
 from typing import Tuple
 
-from src.systems.tasks import UnitSpriteKind
+from src.systems.animations.units import EAnimType
 from src.systems import states
 from src.utils import Vec2
 
 
 @dataclass
 class UnitAi:
-    sprite_kind = UnitSpriteKind.idle
+    sprite_kind = EAnimType.idle
     state: "UnitAiState"
     target = None
     tasks = None
@@ -23,12 +23,12 @@ class UnitAi:
 
 
 class ThinkSystem:
-    think_stuff = None
+    thinkers = None
     world: 'World'
 
     def __init__(self, world):
         self.world = world
-        self.think_stuff = {}
+        self.thinkers = {}
         self.to_add = []
 
     def add(self, mobj):
@@ -41,9 +41,9 @@ class ThinkSystem:
         self.add(mobj)
 
     def tick(self):
-        think_stuff = self.think_stuff
+        thinkers = self.thinkers
         to_pop = []
-        for EID, mobj in think_stuff.items():
+        for EID, mobj in thinkers.items():
             if not mobj.ai.tasks:
                 if mobj.ai.state:
                     task = mobj.ai.state.get_next_task()
@@ -51,11 +51,15 @@ class ThinkSystem:
                         mobj.ai.tasks.append(task)
                 if not mobj.ai.tasks:
                     to_pop.append(mobj.EID)
+                    print("POP", mobj)
+                    mobj.sprite_kind = EAnimType.idle
+                    mobj.frame_id = 0
             while mobj.ai.tasks and mobj.ai.tasks[0].tick():
                 mobj.ai.tasks.popleft()
 
         for EID in to_pop:
-            think_stuff.pop(EID)
+            thinkers.pop(EID)
 
         for mobj in self.to_add:
-            think_stuff[mobj.EID] = mobj
+            thinkers[mobj.EID] = mobj
+        self.to_add.clear()

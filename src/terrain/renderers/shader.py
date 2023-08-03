@@ -9,7 +9,7 @@ from pyglet.gl import *
 
 jn = os.path.join
 MAP_PADDING = 8
-TILE_SIZE = 32
+
 WHITE = (255, 255, 255)
 GRAY = (20, 25, 25)
 BLACK = (0, 0, 0)

@@ -1,8 +1,10 @@
 import pyglet
+
+from src.formats.alm2 import TILE_SIZE
 from src.resources import Resources
 
 MAP_PADDING = 8
-TILE_SIZE = 32
+
 
 
 class TileMap:
@@ -26,7 +28,7 @@ class TileMap:
         column_list = Resources["graphics", "terrain"]
         self.column_order = [x.record.name for x in column_list]
         columns = [x.record.content for x in column_list]
-        columns = [[x.width, x.height, x.convert("RGB").tobytes()] for x in columns]
+        columns = [[x.image.width, x.image.height, x.image.convert("RGB").tobytes()] for x in columns]
         columns = [pyglet.image.ImageData(width=x[0], height=x[1], fmt="RGB", data=x[2]) for x in columns]
         self.columns = columns
 

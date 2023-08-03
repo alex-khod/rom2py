@@ -11,8 +11,8 @@ class TestGraphics(TestCase):
             assert hdr.record.content.count == 1
 
         classes = ["ffighter", "fmage", "mfighter", "mmage"]
-        for klass in classes:
-            for hdr in Resources["graphics", "equipment", klass]:
+        for class_ in classes:
+            for hdr in Resources["graphics", "equipment", class_]:
                 if hdr.record.name in ["primary", "secondary"]:
                     continue
                 if len(hdr.record.bytes) == 0:
@@ -21,7 +21,7 @@ class TestGraphics(TestCase):
                 assert sprite.count == 1
 
             for wielding in ["primary", "secondary"]:
-                for hdr in Resources["graphics", "equipment", klass, wielding]:
+                for hdr in Resources["graphics", "equipment", class_, wielding]:
                     if len(hdr.record.bytes) == 0:
                         # skip faulty zero-length images in .RES
                         continue

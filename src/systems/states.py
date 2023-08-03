@@ -2,26 +2,8 @@ from typing import List, Type
 
 from kaitaistruct import KaitaiStruct
 
-from src.systems import tasks, movement, vision
+from src.systems import tasks, movement, vision, pathfind
 from src.utils import Vec2
-
-
-def move_callback(world, mobj, from_tile_xy, to_tile_xy):
-    mobj.tile_xy = to_tile_xy
-    world.units.layer[from_tile_xy] = None
-    world.units.layer[to_tile_xy] = mobj
-
-    world.vision.set_vision_at(mobj, from_tile_xy, scan_range=3, value=False)
-    world.vision.set_vision_at(mobj, to_tile_xy, scan_range=3, value=True)
-    x, y = to_tile_xy
-
-    for other_mobj in world.vision.tiles[y][x]:
-        if other_mobj.ai.state:
-            continue
-        state_class = other_mobj.ai.new_vision_state
-        other_mobj.ai.state = state_class(other_mobj, world, other_mobj.tile_xy)
-        world.think.add(other_mobj)
-
 
 class AIState:
     pass
@@ -36,25 +18,23 @@ class AIStateIdle(AIState):
         return None
 
 
-from src import pathfind
-
-
 class Pathfinder:
-    def __init__(self, world: 'World', from_tile_xy, to_tile_xy):
-        self.world = world
+    def __init__(self, game: 'game', from_tile_xy, to_tile_xy):
+        self.game = game
         self.path = None
         self.from_tile_xy = from_tile_xy
         self.to_tile_xy = to_tile_xy
 
     # def build_path(self, from_tile_xy, to_tile_xy):
-    #     return pathfind.bfs(world.grid, from_tile_xy, to_tile_xy)
+    #     return pathfind.bfs(game.grid, from_tile_xy, to_tile_xy)
 
     def get_next_tile(self, from_tile_xy, to_tile_xy: Vec2):
-        world = self.world
-        path = pathfind.bfs(world.grid, from_tile_xy, to_tile_xy)
+        game = self.game
+        path = pathfind.bfs(game.grid.grid, from_tile_xy, to_tile_xy)
         if path:
             next_tile = Vec2(*path[-1])
-            if not world.units.layer[next_tile]:
+            print(next_tile)
+            if not game.units.layer[next_tile]:
                 return next_tile
         return None
         # if self.to_tile_xy == to_tile_xy:
@@ -77,8 +57,7 @@ class Pathfinder:
             return task
 
         # self.path.pop()
-        task = tasks.MoveTask(mobj, mobj.tile_xy, next_tile, self.world)
-        task.callback = lambda: move_callback(self.world, mobj, mobj.tile_xy, next_tile)
+        task = tasks.MoveTask(mobj, mobj.tile_xy, next_tile, self.game)
         # print(f"move from {mobj.tile_xy} to {next_tile}")
         return task
 
@@ -97,14 +76,14 @@ class AIStateMove(AIState):
         Move one step closer to destination tile.
     """
 
-    def __init__(self, mobj, world, to_tile_xy):
+    def __init__(self, mobj, game, to_tile_xy):
         self.mobj = mobj
-        self.world = world
+        self.game = game
         self.to_tile_xy = to_tile_xy
-        self.pathfinder = Pathfinder(world, mobj.tile_xy, to_tile_xy)
+        self.pathfinder = Pathfinder(game, mobj.tile_xy, to_tile_xy)
 
     def get_next_task(self):
-        return self.pathfinder.get_movement_task(self.mobj, self.mobj.tile_xy, self.to_tile_xy)
+        return self.pathfinder.get_movement_task(self.mobj, round(self.mobj.tile_xy), self.to_tile_xy)
 
 
 class AIStateHoldPosition(AIState):
@@ -113,16 +92,16 @@ class AIStateHoldPosition(AIState):
         If not possible, move one step closer to destination tile.
     """
 
-    def __init__(self, mobj, world, to_tile_xy=None):
+    def __init__(self, mobj, game, to_tile_xy=None):
         self.mobj = mobj
-        self.world = world
+        self.game = game
         self.to_tile_xy = to_tile_xy or mobj.tile_xy
-        self.pathfinder = Pathfinder(world, mobj.tile_xy, to_tile_xy)
+        self.pathfinder = Pathfinder(game, mobj.tile_xy, to_tile_xy)
 
     def get_next_task(self):
         mobj = self.mobj
 
-        targets = self.world.vision.scan_surroundings(mobj, self.world, scan_range=3)
+        targets = self.game.vision.scan_surroundings(mobj, self.game, scan_range=3)
         task = get_attack_task(mobj, targets)
         if task:
             return task
@@ -137,15 +116,15 @@ class AIStateGuard(AIState):
         If not possible, move one step closer to destination tile.
     """
 
-    def __init__(self, mobj, world, to_tile_xy=None):
+    def __init__(self, mobj, game, to_tile_xy=None):
         self.mobj = mobj
-        self.world = world
+        self.game = game
         self.to_tile_xy = to_tile_xy or mobj.tile_xy
-        self.pathfinder = Pathfinder(world, mobj.tile_xy, to_tile_xy)
+        self.pathfinder = Pathfinder(game, mobj.tile_xy, to_tile_xy)
 
     def get_next_task(self):
         mobj = self.mobj
-        targets = self.world.vision.scan_surroundings(mobj, self.world, scan_range=3)
+        targets = self.game.vision.scan_surroundings(mobj, self.game, scan_range=3)
 
         task = get_attack_task(mobj, targets)
         if task:

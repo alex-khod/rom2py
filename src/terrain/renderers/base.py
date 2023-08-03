@@ -12,7 +12,6 @@ from ...formats.alm2 import Alm2
 jn = os.path.join
 
 MAP_PADDING = 8
-TILE_SIZE = 32
 
 
 class BlendGroup(pyglet.graphics.Group):
@@ -56,6 +55,7 @@ from src.utils import Vec2
 
 class TileSprite(pyglet.sprite.Sprite):
     _heights = (0, 0, 0, 0)
+
     @classmethod
     def from_color(self, color):
         image = pyglet.image.SolidColorImagePattern(color).create_image(32, 32)
@@ -147,6 +147,8 @@ class TileSprite(pyglet.sprite.Sprite):
             assert len(texture.tex_coords) == 12, "Texture coords have some freaky length?"
             self._vertex_list.tex_coords[:] = self._tc_nudge(texture.tex_coords, texture.width)
         self._texture = texture
+
+
 class TerrainSpriteRenderer:
 
     def __init__(self, alm):

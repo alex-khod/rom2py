@@ -6,5 +6,5 @@ if __name__ == "__main__":
     except:
         import traceback
         traceback.print_exc()
-        with open("error.log", "w") as f:
-            traceback.print_exc(file=f)
+        # with open("error.log", "w") as f:
+        #     traceback.print_exc(file=f)

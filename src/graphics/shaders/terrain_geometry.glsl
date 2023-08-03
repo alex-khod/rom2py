@@ -26,7 +26,7 @@ void main() {
     float row_id = tile_id & 15u;
     //    column_id = [28..31] - rock tiles
     //    column_id = [32..48] - water tiles
-    is_passable = float((column_id > 27.5) && (column_id < 49.5));
+    is_passable = float((column_id > 27.5) && (column_id < 47.5));
     // not
     is_passable = 1.0 - is_passable;
 

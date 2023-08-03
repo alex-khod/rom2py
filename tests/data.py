@@ -16,7 +16,7 @@ def write_test_data():
     rom16a = ROM16APython.from_bytes(_bytes)
     idxs = rom16a[0].to_color_indexes()
     import os
-    with open(os.path.join("data", "unit.bin"), "wb") as f:
+    with open(os.path.join("data", "self.bin"), "wb") as f:
         _bytes = idxs.tobytes()
         f.write(_bytes)
 

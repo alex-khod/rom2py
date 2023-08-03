@@ -3,11 +3,12 @@ import os
 from src.graphics.shaders import get_sprite_shader
 from pyglet.gl import *
 from src.graphics.textures import TextureAtlas, TextureBin, Texture
-
+# from src.graphics.sprite import Sprite
+from pyglet.sprite import Sprite
 jn = os.path.join
 
 MAP_PADDING = 8
-TILE_SIZE = 32
+
 
 
 class PalettedSpriteRenderer:
@@ -42,7 +43,7 @@ class PalettedSpriteRenderer:
         shadow.opacity = 127
         sprite = PalettedSprite(animation, x, y, 0, batch=self.batch, palette_tex=palette)
         sprite.shadow = shadow
-        self.redraw_shadow(sprite)
+        # self.redraw_shadow(sprite)
         self.sprites.append(sprite)
         return sprite
 
@@ -55,7 +56,7 @@ class PalettedSpriteRenderer:
         # self.palette_atlas.texture.blit(0,0)
 
 
-class PalettedSprite(pyglet.sprite.Sprite):
+class PalettedSprite(Sprite):
     _palette_tex = None
     shadow = None
 
@@ -71,12 +72,13 @@ class PalettedSprite(pyglet.sprite.Sprite):
     def _create_vertex_list(self):
         if not self._palette_tex:
             return
-        _palette_tex = self._palette_tex[0]
+        _palette_tex = self._palette_tex
         self._vertex_list = self.program.vertex_list_indexed(
             4, GL_TRIANGLES, [0, 1, 2, 0, 2, 3], self._batch, self._group,
             translate=('f', (self._x, self._y, self._z) * 4),
             tex_coords=('f', self._texture.tex_coords),
             pal_coords=('f', _palette_tex.tex_coords[:3] * 4),
+            scale=('f', (self._scale*self._scale_x, self._scale*self._scale_y) * 4),
             colors=('Bn', (*self._rgb, int(self._opacity)) * 4),
         )
         self._update_position()

@@ -69,16 +69,16 @@ class Test256CExt(SpriteTest, TestCase):
 class TestROM16APython(SpriteTest, TestCase):
     impl_class = ROM16APython
     test_resource_path = "graphics", "interface", "inn", "unit1", "sprites.16a"
-    good_data_path = "data", "unit.bin"
+    good_data_path = "data", "self.bin"
 
 
 class TestROM16ACpp(SpriteTest, TestCase):
     impl_class = ROM16ACpp
     test_resource_path = "graphics", "interface", "inn", "unit1", "sprites.16a"
-    good_data_path = "data", "unit.bin"
+    good_data_path = "data", "self.bin"
 
 
 class Test16ACExt(SpriteTest, TestCase):
     impl_class = ROM16ACExt
     test_resource_path = "graphics", "interface", "inn", "unit1", "sprites.16a"
-    good_data_path = "data", "unit.bin"
+    good_data_path = "data", "self.bin"

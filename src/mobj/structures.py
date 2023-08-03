@@ -3,7 +3,7 @@ from profilehooks import timecall
 
 from src.resources import Resources
 
-TILE_SIZE = 32
+
 
 
 class Structures:
